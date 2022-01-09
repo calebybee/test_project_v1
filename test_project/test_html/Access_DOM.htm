@@ -1,0 +1,1540 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<HTML>
+
+<HEAD>
+    <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+    <META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+    <META NAME="GENERATOR" CONTENT="Adobe FrameMaker 2020/HTML Export Filter">
+    <LINK REL="STYLESHEET" HREF="Access_DOM.css" CHARSET="UTF-8" TYPE="text/css">
+    <TITLE> IPDDomNode data types</TITLE>
+</HEAD>
+
+<BODY>
+    <P CLASS="FM1Head">
+        Reading PDF Files Through the DOM Interface
+    </P>
+    <P CLASS="Body">
+        Acrobat 6.0 and later defines a document object model (DOM) that provides more
+        complete access to the document structure than the MSAA interface. The Accessibility plug-in defines and exports
+        five COM interfaces in <code>            AcrobatAccess.lib</code>
+        that expose Acrobat's document hierarchy:
+    </P>
+    <UL>
+        *             <code>                IPDDomNode</code>
+            defines methods that apply to all elements of the document hierarchy.
+        </LI>
+        *             <code>                IPDDomDocument</code>
+            interface is exported by the root object for the page or document.
+        </LI>
+    </UL>
+    <P CLASS="NoteIndent">
+        <code>            IPDDomNodeExt</code>
+        interface is exported by every object that exports <code>            IPDDomNode</code>
+        .
+    </P>
+    <UL>
+        *             <code>                IPDDomElement</code>
+            defines additional methods that apply only to structure elements.
+        </LI>
+        *             <code>                IPDDomWord</code>
+            defines additional methods that apply only to individual words in the document.
+        </LI>
+        *             <code>                IPDDomGroupInfo</code>
+            defines an additional method that applies to radio buttons, list boxes, and combo boxes.
+        </LI>
+    </UL>
+    <P CLASS="Body">
+        Clients of these interfaces must include the files <code>            AcrobatAccess.h</code>
+        , <code>            AcrobatAccess_i.c</code>
+        and <code>            IPDDom.h</code>
+        .
+    </P>
+    
+        <h1>
+            IPDDomNode data types
+        </H1>
+        <P CLASS="Body">
+            PDF
+            DOM hierarchy.
+        </P>
+        
+            <h2>
+                CPDDomNodeType
+            </H2>
+            <P CLASS="Body">
+                Defines the type of a node in the PDF DOM hierarchy returned by <EM
+                    CLASS="Courier">
+                    GetType</EM>
+                .
+            </P>
+            
+                <h3>
+                    Syntax
+                </H3>
+                <P CLASS="CodeReference">
+                    typedef enum {
+                </P>
+                <P CLASS="CodeReference">
+                     CPDDomNode_Document = 1,
+                </P>
+                <P CLASS="CodeReference">
+                     CPDDomNode_Page = 2,
+                </P>
+                <P CLASS="CodeReference">
+                     CPDDomNode_StructElement = 3,
+                </P>
+                <P CLASS="CodeReference">
+                     CPDDomNode_Text = 4,
+                </P>
+                <P CLASS="CodeReference">
+                     CPDDomNode_Word = 5,
+                </P>
+                <P CLASS="CodeReference">
+                     CPDDomNode_Char = 6,
+                </P>
+                <P CLASS="CodeReference">
+                     CPDDomNode_Graphic = 7,
+                </P>
+                <P CLASS="CodeReference">
+                     CPDDomNode_Link = 8,
+                </P>
+                <P CLASS="CodeReference">
+                     CPDDomNode_PushButtonField = 9,
+                </P>
+                <P CLASS="CodeReference">
+                     CPDDomNode_TextEditField =10,
+                </P>
+                <P CLASS="CodeReference">
+                     CPDDomNode_StaticTextField =11,
+                </P>
+                <P CLASS="CodeReference">
+                     CPDDomNode_ListboxField =12,
+                </P>
+                <P CLASS="CodeReference">
+                     CPDDomNode_ComboboxField =13,
+                </P>
+                <P CLASS="CodeReference">
+                     CPDDomNode_CheckboxField =14,
+                </P>
+                <P CLASS="CodeReference">
+                     CPDDomNode_RadioButtonField =15,
+                </P>
+                <P CLASS="CodeReference">
+                     PDDomNode_SignatureField =16,
+                </P>
+                <P CLASS="CodeReference">
+                     CPDDomNode_OtherField =17,
+                </P>
+                <P CLASS="CodeReference">
+                     CPDDomNode_Comment =18,
+                </P>
+                <P CLASS="CodeReference">
+                     CPDDomNode_TextComment =19,
+                </P>
+                <P CLASS="CodeReference">
+                     CPDDomNode_Other =20,
+                </P>
+                <P CLASS="CodeReference">
+                     CPDDomNode_LineSeg =21,
+                </P>
+                <P CLASS="CodeReference">
+                     CPDDomNode_WordSeg =22
+                </P>
+                <P CLASS="CodeReference">
+                    } CPDDomNodeType;
+                </P>
+            
+        
+        
+            <h2>
+                PDDom_FontStyle
+            </H2>
+            <P CLASS="Body">
+                font styles returned by <EM
+                    CLASS="Courier">
+                    GetFontInfo</EM>
+                .
+            </P>
+            
+                <h3>
+                    Syntax
+                </H3>
+                <P CLASS="CodeReference">
+                    typedef enum {
+                </P>
+                <P CLASS="CodeReference">
+                     PDDOM_FONTATTR_ITALIC = 0x1,
+                </P>
+                <P CLASS="CodeReference">
+                     PDDOM_FONTATTR_SMALLCAP = 0x2,
+                </P>
+                <P CLASS="CodeReference">
+                     PDDOM_FONTATTR_ALLCAP = 0x4,
+                </P>
+                <P CLASS="CodeReference">
+                     PDDOM_FONTATTR_SCRIPT = 0x8,
+                </P>
+                <P CLASS="CodeReference">
+                     PDDOM_FONTATTR_BOLD = 0x10,
+                </P>
+                <P CLASS="CodeReference">
+                     PDDOM_FONTATTR_LIGHT = 0x20
+                </P>
+                <P CLASS="CodeReference">
+                    } PDDOM_FontStyle;
+                </P>
+            
+        
+        
+            <h2>
+                FontInfoState
+            </H2>
+            <P CLASS="Body">
+                font status returned by <EM
+                    CLASS="Courier">
+                    GetFontInfo</EM>
+                .
+            </P>
+            
+                <h3>
+                    Syntax
+                </H3>
+                <P CLASS="CodeReference">
+                    typedef enum {
+                </P>
+                <P CLASS="CodeReference">
+                     FontInfo_Unchecked =1,
+                </P>
+                <P CLASS="CodeReference">
+                     FontInfo_NoInfo =2,
+                </P>
+                <P CLASS="CodeReference">
+                     FontInfo_MixedInfo =3,
+                </P>
+                <P CLASS="CodeReference">
+                     FontInfo_Valid =4
+                </P>
+                <P CLASS="CodeReference">
+                    } FontInfoState;
+                </P>
+            
+        
+        
+            <h2>
+                DocState
+            </H2>
+            <P CLASS="TableBody">
+                document status returned by <EM
+                    CLASS="Courier">
+                    GetDocInfo</EM>
+                in the IPDDomDocument interface.
+            </P>
+            
+                <h3>
+                    Syntax
+                </H3>
+                <P CLASS="CodeReference">
+                    enum DocState {
+                </P>
+                <P CLASS="CodeReference">
+                     DocState_OK =0,
+                </P>
+                <P CLASS="CodeReference">
+                     DocState_Protected =1,
+                </P>
+                <P CLASS="CodeReference">
+                     DocState_Empty =2,
+                </P>
+                <P CLASS="CodeReference">
+                     DocState_Unavailable =3
+                </P>
+                <P CLASS="CodeReference">
+                    };
+                </P>
+            
+        
+        
+            <h2>
+                NodeRelationship
+            </H2>
+            <P CLASS="Body">
+                Constants returned by <code>                    Relationship</code>
+                in the IPDDomNodeExt interface.
+            </P>
+            <P CLASS="CodeReference">
+                enum NodeRelationship {
+            </P>
+            <P CLASS="CodeReference">
+                 NodeRelationship_Descendant =0,
+            </P>
+            <P CLASS="CodeReference">
+                 NodeRelationship_Ancestor =1,
+            </P>
+            <P CLASS="CodeReference">
+                 NodeRelationship_Before =2,
+            </P>
+            <P CLASS="CodeReference">
+                 NodeRelationship_After =3
+            </P>
+            <P CLASS="CodeReference">
+                 NodeRelationship_Equal =4,
+            </P>
+            <P CLASS="CodeReference">
+                 NodeRelationship_None =5
+            </P>
+            <P CLASS="CodeReference">
+                };
+            </P>
+        
+    
+    
+        <h1>
+            IPDDomNode methods
+        </H1>
+        <P CLASS="Body">
+            <code>                IPDDomNode</code>
+            defines methods that apply to all elements of the document hierarchy.
+        </P>
+        
+            <h2>
+                Words and lines in text
+            </H2>
+            <P CLASS="Body">
+                An <code>                    IPDDomNode</code>
+                that represents a text node has the role <code>                    CPDDomNode_Text</code>
+                . By default, the children of text nodes are word nodes. To get the word
+                children of a text node, call the <code>                    IPDomNode</code>
+                method <code>                    GetChild</code>
+                . An <code>                    IPDDomNode</code>
+                that represents a word has the role <code>                    CPDDomNode_Word</code>
+                .
+            </P>
+            <P CLASS="Note">
+                When a word is hyphenated and thus appears on two lines, each segment of the
+                word is returned as a child that has the role <code>                    CPDDom_WordSeg</code>
+                .
+            </P>
+            <P CLASS="Body">
+                lines as
+                children. To get the line children of a text node, call the <code>                    IPDomNode</code>
+                method <code>                    GetTextInLines</code>
+                . This method returns a new object for the text node. Subsequently, calling <code>                    getChild</code>
+                on this object returns lines as children. An <code>                    IPDDomNode</code>
+                that represents a line has the role <code>                    CPDDomNode_LineSeg</code>
+                . The children of that line node will be the words in that line.
+            </P>
+        
+        
+            <h2>
+                GetParent
+            </H2>
+            <P CLASS="Body">
+                <code>                    ppDispParent</code>
+                returns the <code>                    IPDDomNode</code>
+                for the parent of this element if there ís a parent element in the DOM hierarchy, or <EM
+                    CLASS="Courier">
+                    NULL</EM>
+                if this element is the root element of the hierarchy.
+            </P>
+            
+                <h3>
+                    Syntax
+                </H3>
+                <P CLASS="CodeReference">
+                    LRESULT GetParent (IDispatch **ppDispParent)
+                </P>
+            
+        
+        
+            <h2>
+                GetType
+            </H2>
+            <P CLASS="Body">
+                <code>                    nodeType</code>
+                returns the <code>                    CPDDomNodeType</code>
+                of this element.
+            </P>
+            
+                <h3>
+                    Syntax
+                </H3>
+                <P CLASS="CodeReference">
+                    LRESULT GetType (long *nodeType)
+                </P>
+            
+        
+        
+            <h2>
+                GetChild
+            </H2>
+            <P CLASS="Body">
+                <code>                    ppDispChild</code>
+                returns the <code>                    IPDDomNode</code>
+                for the child of this element at position <code>                    index</code>
+                , or <code>                    NULL</code>
+                if there is no child at position <code>                    index</code>
+                .
+            </P>
+            <P CLASS="Body">
+                For a text node, this returns child words; see <A
+                    HREF="Access_DOM.htm#33811" CLASS="XRef">See Words and lines in text</A>.
+            </P>
+            
+                <h3>
+                    Syntax
+                </H3>
+                <P CLASS="CodeReference">
+                    LRESULT GetChild (ASInt32 index, IDispatch **ppDispChild)
+                </P>
+            
+        
+        
+            <h2>
+                GetChildCount
+            </H2>
+            <P CLASS="Body">
+                <code>                    pCountChildren</code>
+                returns the number of children of this element.
+            </P>
+            
+                <h3>
+                    Syntax
+                </H3>
+                <P CLASS="CodeReference">
+                    LRESULT GetChildCount (long *pCountChildren)
+                </P>
+            
+        
+        
+            <h2>
+                GetName
+            </H2>
+            <P CLASS="Body">
+                <code>                    pszName</code>
+                returns the name of this element.
+            </P>
+            <UL>
+                *                     For individual words, this is <code>                        NULL</code>
+                    .
+                </LI>
+                *                     For form fields, it is the short description associated with the field.
+                </LI>
+                *                     For comments, it is a combination of the comment type and subject (if
+                    any).
+                </LI>
+            </UL>
+            
+                <h3>
+                    Syntax
+                </H3>
+                <P CLASS="CodeReference">
+                    LRESULT GetName (BSTR *pszName)
+                </P>
+            
+        
+        
+            <h2>
+                GetValue
+            </H2>
+            <P CLASS="TableBody">
+                <code>                    pszValue</code>
+                returns the value of this element.
+            </P>
+            <UL>
+                *                     For individual words, this is the word itself.
+                </LI>
+                *                     For form fields, it is the current text content of the field.
+                </LI>
+                *                     For links, it is a description of the associated action.
+                </LI>
+                *                     For comments, it is the contents.
+                </LI>
+                *                     For a signature field, it is the name of the signer and the date signed.
+                </LI>
+            </UL>
+            
+                <h3>
+                    Syntax
+                </H3>
+                <P CLASS="CodeReference">
+                    LRESULT GetValue (BSTR *pszValue)
+                </P>
+            
+        
+        
+            <h2>
+                IsSame
+            </H2>
+            <P CLASS="Body">
+                If <code>                    pNode</code>
+                refers to the same node as this element, <code>                    isSame</code>
+                returns <code>                    true</code>
+                .
+            </P>
+            
+                <h3>
+                    Syntax
+                </H3>
+                <P CLASS="CodeReference">
+                    LRESULT IsSame (IPDDomNode *pNode, BOOL *isSame)
+                </P>
+            
+        
+        
+            <h2>
+                GetTextContent
+            </H2>
+            <P CLASS="Body">
+                <code>                    pszText</code>
+                returns the value of all text in the document subtree rooted at this element. Alternate text, actual
+                text, and expansion attributes are included and may override text within the document.
+            </P>
+            
+                <h3>
+                    Syntax
+                </H3>
+                <P CLASS="CodeReference">
+                    LRESULT GetTextContent (BSTR *pszText)
+                </P>
+            
+        
+        
+            <h2>
+                GetFontInfo
+            </H2>
+            <P CLASS="Body">
+                These values describe the font characteristics for the text content of this
+                element.
+            </P>
+            <UL>
+                *                     <code>                        fontStatus</code>
+                    returns a value of type <code>                        FontInfoState</code>
+                    .
+                </LI>
+                <UL>
+                    <UL>
+                        <LI CLASS="Bullet2">
+                            If value is <code>                                FontInfo_NoInfo</code>
+                            , the text is not rendered, so it has no font characteristics. For example, alternate text
+                            has no font characteristics.
+                        </LI>
+                        <LI CLASS="Bullet2">
+                            If value is <code>                                FontInfo_Valid</code>
+                            , the rest of the values describe the font characteristics for all of the text in the
+                            subtree. That is, each word of the text either has these characteristics or has no font
+                            characteristics.
+                        </LI>
+                        <LI CLASS="Bullet2">
+                            If value is <code>                                FontInfo_MixedInfo</code>
+                            , different words of the text have different font characteristics, and the document subtree
+                            must be examined more closely to determine which text has which font characteristics.
+                        </LI>
+                    </UL>
+                </UL>
+                *                     <code>                        pszName</code>
+                    returns the name of the font.
+                </LI>
+                *                     <code>                        fontSize</code>
+                    returns the point size.
+                </LI>
+                *                     <code>                        fontAttr</code>
+                    returns the set of <code>                        PDDom_FontStyle</code>
+                    values.
+                </LI>
+            </UL>
+            <P CLASS="Indent1">
+                <code>                    red, green, blue</code>
+                return the RGB components of the color of the text. Each component is a value between 0 and 1.
+            </P>
+            
+                <h3>
+                    Syntax
+                </H3>
+                <P CLASS="CodeReference">
+                    LRESULT GetFontInfo (long* fontStatus, BSTR* pszName, float* fontSize,
+                    long* fontAttr, float* red, float* green, float* blue)
+                </P>
+            
+        
+        
+            <h2>
+                GetLocation
+            </H2>
+            <P CLASS="Body">
+                Returns the screen coordinates of the upper left corner, width, and height
+                of the content of the element. Note that this is not exactly the same as the bounding box. If the
+                element spans multiple pages, this method returns only the location on the first visible page. If none
+                of the element's contents are visible, this method returns an empty location.
+            </P>
+            
+                <h3>
+                    Syntax
+                </H3>
+                <P CLASS="CodeReference">
+                    LRESULT GetLocation (long *pxLeft, ong *pyTop, long *pcxWidth, long
+                    *pcyHeight)
+                </P>
+            
+        
+        
+            <h2>
+                GetFromID
+            </H2>
+            <P CLASS="Body">
+                <code>                    ppDispNode</code>
+                returns the <code>                    IPDDomNode</code>
+                for the element in the same document with the matching ID attribute, or <code>                    NULL</code>
+                if there is no such element.
+            </P>
+            <P CLASS="Body">
+                The <code>                    id</code>
+                value is not the same as the UID returned by <code>                    IAccID</code>
+                in the MSAA interface; it is an optional attribute of the PDF file itself, as returned by <EM
+                    CLASS="Courier">
+                    GetID</EM>
+                in <code>                    IPDDomElement</code>
+                .
+            </P>
+            
+                <h3>
+                    Syntax
+                </H3>
+                <P CLASS="CodeReference">
+                    LRESULT GetFromID (BSTR id, IDispatch **ppDispNode)
+                </P>
+            
+        
+        
+            <h2>
+                GetIAccessible
+            </H2>
+            <P CLASS="Body">
+                Returns the MSAA <code>                    IAccessible</code>
+                element corresponding to this element. (Acrobat exports an MSAA interface to the document, as well as a
+                DOM interface.)
+            </P>
+            <P CLASS="Body">
+                Not all DOM elements have corresponding MSAA elements, because the DOM tree
+                breaks the content down into much smaller pieces. If <code>                    ppIAccessible</code>
+                is <code>                    NULL</code>
+                , search for an ancestor with a non-<code>                    NULL</code>
+                value for <code>                    GetIAccessible</code>
+                to find the corresponding MSAA interface.
+            </P>
+            <P CLASS="Body">
+                Use the method <code>                    get_PDDomNode</code>
+                to find the <code>                    IPDDomNode</code>
+                corresponding to a PDF document <code>                    IAccessible</code>
+                object.
+            </P>
+            
+                <h3>
+                    Syntax
+                </H3>
+                <P CLASS="CodeReference">
+                    LRESULT GetIAccessible (IDispatch **ppIAccessible)
+                </P>
+            
+        
+        
+            <h2>
+                ScrollTo
+            </H2>
+            <P CLASS="Body">
+                Makes the contents of the node visible. If the contents cover more than one
+                page, only the contents on the first page are made visible. If the entire contents do not fit, the upper
+                left portion is shown.
+            </P>
+            
+                <h3>
+                    Syntax
+                </H3>
+                <P CLASS="CodeReference">
+                    LRESULT ScrollTo()
+                </P>
+            
+        
+        
+            <h2>
+                GetTextInLines
+            </H2>
+            <P CLASS="Body">
+                <code>                    ppDispTextLines</code>
+                returns an <code>                    IPDDomNode</code>
+                whose children (obtained by calling <code>                    GetChild</code>
+                ) have the role <code>                    CPDDomNode_LineSeg</code>
+                ; see <A HREF="Access_DOM.htm#33811" CLASS="XRef">See Words and lines in text</A>.
+            </P>
+            <P CLASS="Body">
+                <code>                    visibleOnly</code>
+                controls whether the children include only lines that contain at least some visible text.
+            </P>
+            <P CLASS="Body">
+                If the role the node is not <code>                    CPDDomNode_Text</code>
+                , this method returns <code>                    E_FAIL</code>
+                .
+            </P>
+            
+                <h3>
+                    Syntax
+                </H3>
+                <P CLASS="CodeReference">
+                    LRESULT GetTextInLines (BOOL visibleOnly, IDispatch** ppDispTextLines)
+                </P>
+            
+        
+    
+    
+        <h1>
+            <A
+                NAME="95391"></A>IPDDomNodeExt methods
+        </H1>
+        <P CLASS="Body">
+            The <code>                IPDDomNodeExt</code>
+            interface is exported by every object that exports <code>                IPDDomNode</code>
+            . For Acrobat 7.0 and later, the following methods are available from all objects.
+        </P>
+        
+            <h2>
+                Navigate
+            </H2>
+            <P CLASS="Body">
+                Traverses to another user interface element within a container and retrieves
+                the object. <code>                    navDir</code>
+                indicates which type of navigation is desired, and the node in that direction is returned in <EM
+                    CLASS="Courier">
+                    next</EM>
+                . This method is defined in the <code>                    IPDDomNodeExt</code>
+                interface on any node.
+            </P>
+            
+                <h3>
+                    Syntax
+                </H3>
+                <P CLASS="CodeReference">
+                    HRESULT Navigate(
+                </P>
+                <P CLASS="CodeReference">
+                    long navDir,
+                </P>
+                <P CLASS="CodeReference">
+                    IPDDomNode* next);
+                </P>
+            
+        
+        
+            <h2>
+                ScrollToEx
+            </H2>
+            <P CLASS="Body">
+                Determines where to scroll when the item is too large to fit in the window.
+                If both parameters are <code>                    true</code>
+                , this method is equivalent to <code>                    ScrollTo</code>
+                . This method is defined in the <code>                    IPDDomNodeExt</code>
+                interface on any node.
+            </P>
+            
+                <h3>
+                    Syntax
+                </H3>
+                <P CLASS="CodeReference">
+                    HRESULT ScrollToEx(
+                </P>
+                <P CLASS="CodeReference">
+                    BOOL favorLeft,
+                </P>
+                <P CLASS="CodeReference">
+                    BOOL favorTop);
+                </P>
+            
+        
+        
+            <h2>
+                SetFocus
+            </H2>
+            <P CLASS="Body">
+                Sets the focus to this node, if it can take focus. This method is defined in
+                the <code>                    IPDDomNodeExt</code>
+                interface on any node.
+            </P>
+            
+                <h3>
+                    Syntax
+                </H3>
+                <P CLASS="CodeReference">
+                    HRESULT SetFocus();
+                </P>
+            
+        
+        
+            <h2>
+                GetState
+            </H2>
+            <P CLASS="Body">
+                Returns a set of state flags identical to those returned by <EM
+                    CLASS="Courier">
+                    get_accState</EM>
+                for the corresponding <code>                    IAccessible</code>
+                object. This method is defined in the <code>                    IPDDomNodeExt</code>
+                interface on any node.
+            </P>
+            
+                <h3>
+                    Syntax
+                </H3>
+                <P CLASS="CodeReference">
+                    HRESULT GetState(
+                </P>
+                <P CLASS="CodeReference">
+                    long* state);
+                </P>
+            
+        
+        
+            <h2>
+                GetIndex
+            </H2>
+            <P CLASS="Body">
+                Returns the child index of this node in its parent. The root node returns
+                -1. This method is defined in the <code>                    IPDDomNodeExt</code>
+                interface on any node.
+            </P>
+            
+                <h3>
+                    Syntax
+                </H3>
+                <P CLASS="CodeReference">
+                    HRESULT GetIndex(
+                </P>
+                <P CLASS="CodeReference">
+                    long* pIndex);
+                </P>
+            
+        
+        
+            <h2>
+                GetPageNum
+            </H2>
+            <P CLASS="Body">
+                Returns the first and last pages on which the node appears. This method is
+                defined in the <code>                    IPDDomNodeExt</code>
+                interface on any node.
+            </P>
+            
+                <h3>
+                    Syntax
+                </H3>
+                <P CLASS="CodeReference">
+                    HRESULT GetPageNum(
+                </P>
+                <P CLASS="CodeReference">
+                    long* firstPage,
+                </P>
+                <P CLASS="CodeReference">
+                    long* lastPage);
+                </P>
+            
+        
+        
+            <h2>
+                DoDefaultAction
+            </H2>
+            <P CLASS="Body">
+                Executes the default action for a node. This method is defined in the <EM
+                    CLASS="Courier">
+                    IPDDomNodeExt</EM>
+                interface on any node.
+            </P>
+            
+                <h3>
+                    Syntax
+                </H3>
+                <P CLASS="CodeReference">
+                    HRESULT DoDefaultAction();
+                </P>
+            
+        
+        
+            <h2>
+                Relationship
+            </H2>
+            <P CLASS="Body">
+                Returns the relationship of the <code>                    node</code>
+                parameter to this node. The value is of type <code>                    NodeRelationship</code>
+                , defined in IPDDom.h. This method is defined in the <code>                    IPDDomNodeExt</code>
+                interface on any node.
+            </P>
+            
+                <h3>
+                    Syntax
+                </H3>
+                <P CLASS="CodeReference">
+                    HRESULT Relationship(
+                </P>
+                <P CLASS="CodeReference">
+                    PDDomNode* node,
+                </P>
+                <P CLASS="CodeReference">
+                    long* pRel);
+                </P>
+            
+        
+    
+    
+        <h1>
+            IPDDomDocument methods
+        </H1>
+        <P CLASS="Body">
+            The root object for the page or document exports the <code>                IPDDomDocument</code>
+            interface. For Acrobat 7.0 and later, the following methods are available from the root object.
+        </P>
+        
+            <h2>
+                SetCaret
+            </H2>
+            <P CLASS="Body">
+                Sets the caret to the specified index in the word. If the index is 0, it is
+                placed at the beginning of the word.
+            </P>
+            
+                <h3>
+                    Syntax
+                </H3>
+                <P CLASS="CodeReference">
+                    HRESULT SetCaret(
+                </P>
+                <P CLASS="CodeReference">
+                    IPDDomWord* node,
+                </P>
+                <P CLASS="CodeReference">
+                    long index);
+                </P>
+            
+        
+        
+            <h2>
+                GetCaret
+            </H2>
+            <P CLASS="Body">
+                Returns the screen location of the caret, the node containing the caret, and
+                the zero-based index of the caret within the node. The node may be a word node or a form field. If there
+                is no active caret, the call returns <code>                    S_FALSE</code>
+                .
+            </P>
+            
+                <h3>
+                    Syntax
+                </H3>
+                <P CLASS="CodeReference">
+                    HRESULT GetCaret(
+                </P>
+                <P CLASS="CodeReference">
+                    long* pxLeft,
+                </P>
+                <P CLASS="CodeReference">
+                    long* pyTop,
+                </P>
+                <P CLASS="CodeReference">
+                    long* pcxWidth,
+                </P>
+                <P CLASS="CodeReference">
+                    long* pcyHeight,
+                </P>
+                <P CLASS="CodeReference">
+                    IPDDomNode** node,
+                </P>
+                <P CLASS="CodeReference">
+                    long* index);
+                </P>
+            
+        
+        
+            <h2>
+                NextFocusNode
+            </H2>
+            <P CLASS="Body">
+                Gets the next or previous focusable <code>                    IPDDomNode</code>
+                . If <code>                    forward</code>
+                is <code>                    true</code>
+                , it gets the next focusable node. Returns <code>                    NULL</code>
+                if there is not another focusable node in the selected direction. Searches only the current DOM tree,
+                which means that in page mode it will only return results within the page tree instead of the entire
+                document.
+            </P>
+            
+                <h3>
+                    Syntax
+                </H3>
+                <P CLASS="CodeReference">
+                    HRESULT NextFocusNode(
+                </P>
+                <P CLASS="CodeReference">
+                    BOOL forward,
+                </P>
+                <P CLASS="CodeReference">
+                    IPDDomNode* node);
+                </P>
+            
+        
+        
+            <h2>
+                GetFocusNode
+            </H2>
+            <P CLASS="Body">
+                Returns the <code>                    IPDDomNode</code>
+                with focus. The node is set to <code>                    NULL</code>
+                if the focus is on the document (rather than an annotation) or if the focus is not within the document.
+            </P>
+            
+                <h3>
+                    Syntax
+                </H3>
+                <P CLASS="CodeReference">
+                    HRESULT GetFocusNode(
+                </P>
+                <P CLASS="CodeReference">
+                    IPDDomNode* node);
+                </P>
+            
+        
+        
+            <h2>
+                SelectText
+            </H2>
+            <P CLASS="Body">
+                Sets the text selection by identifying the start and end locations of the
+                selection.
+            </P>
+            
+                <h3>
+                    Syntax
+                </H3>
+                <P CLASS="CodeReference">
+                    HRESULT SelectText(
+                </P>
+                <P CLASS="CodeReference">
+                    IPDDomWord* startNode,
+                </P>
+                <P CLASS="CodeReference">
+                    long startIndex,
+                </P>
+                <P CLASS="CodeReference">
+                    IPDDomWord* endNode,
+                </P>
+                <P CLASS="CodeReference">
+                    long endIndex);
+                </P>
+            
+        
+        
+            <h2>
+                GetTextSelection
+            </H2>
+            <P CLASS="Body">
+                Retrieves the value of the selected text.
+            </P>
+            
+                <h3>
+                    Syntax
+                </H3>
+                <P CLASS="CodeReference">
+                    HRESULT GetTextSelection(
+                </P>
+                <P CLASS="CodeReference">
+                    BSTR* selection);
+                </P>
+            
+        
+        
+            <h2>
+                GetSelectionBounds
+            </H2>
+            <P CLASS="Body">
+                <EM CLASS="Bold">
+                    Not implemented</EM>
+                . This procedure always returns <code>                    S_FALSE</code>
+                .
+            </P>
+            
+                <h3>
+                    Syntax
+                </H3>
+                <P CLASS="CodeReference">
+                    HRESULT GetSelectionBounds(
+                </P>
+                <P CLASS="CodeReference">
+                    IPDDomWord** start,
+                </P>
+                <P CLASS="CodeReference">
+                    long* startIndex,
+                </P>
+                <P CLASS="CodeReference">
+                    IPDDomWord** stop,
+                </P>
+                <P CLASS="CodeReference">
+                    long* stopIndex);
+                </P>
+            
+        
+        
+            <h2>
+                GetDocInfo
+            </H2>
+            <P CLASS="Body">
+                Returns the full pathname of the file, how many pages it contains, and the
+                range of pages that are at least partially visible. The <code>                    status</code>
+                indicates whether there are issues with this document or page, such as access controls prohibiting
+                access or an apparently empty page or document. If <code>                    lang</code>
+                is not <code>                    NULL</code>
+                , it is the default language used in the document.
+            </P>
+            <P CLASS="Note">
+                The <code>                    GetDocInfo</code>
+                and <code>                    GoToPage</code>
+                methods use different numbering systems. The page numbers returned as <code>                    firstVisiblePage</code>
+                and <code>                    lastVisiblePage</code>
+                by <code>                    GetDocInfo</code>
+                are based on page 1 as the first page of the document. However, the <code>                    GoToPage</code>
+                method treats page 0 as the first page of the document. Therefore, you must adjust accordingly when
+                passing the value of <code>                    pageNum</code>
+                to <code>                    GoToPage</code>
+                .
+            </P>
+            
+                <h3>
+                    Syntax
+                </H3>
+                <P CLASS="CodeReference">
+                    HRESULT GetDocInfo(
+                </P>
+                <P CLASS="CodeReference">
+                    BSTR* fileName,
+                </P>
+                <P CLASS="CodeReference">
+                    long* nPages,
+                </P>
+                <P CLASS="CodeReference">
+                    long* firstVisiblePage,
+                </P>
+                <P CLASS="CodeReference">
+                    long* lastVisiblePage,
+                </P>
+                <P CLASS="CodeReference">
+                    long* status,
+                </P>
+                <P CLASS="CodeReference">
+                    BSTR* lang);
+                </P>
+            
+        
+        
+            <h2>
+                GoToPage
+            </H2>
+            <P CLASS="Body">
+                Positions the document so that the requested page is visible.
+            </P>
+            <P CLASS="Note">
+                The <code>                    GetDocInfo</code>
+                and <code>                    GoToPage</code>
+                methods use different numbering systems. The page numbers returned as <code>                    firstVisiblePage</code>
+                and <code>                    lastVisiblePage</code>
+                by <code>                    GetDocInfo</code>
+                are based on page 1 as the first page of the document. However, the <code>                    GoToPage</code>
+                method treats page 0 as the first page of the document. Therefore, you must adjust accordingly when
+                passing the value of <code>                    pageNum</code>
+                to <code>                    GoToPage</code>
+                .
+            </P>
+            
+                <h3>
+                    Syntax
+                </H3>
+                <P CLASS="CodeReference">
+                    HRESULT GoToPage(
+                </P>
+                <P CLASS="CodeReference">
+                    long pageNum);
+                </P>
+            
+        
+    
+    
+        <h1>
+            IPDDomElement Methods
+        </H1>
+        <P CLASS="Body">
+            <code>                IPDDomElement</code>
+            defines additional methods that apply only to structure elements.
+        </P>
+        
+            <h2>
+                GetTagName
+            </H2>
+            <P CLASS="Body">
+                <code>                    pszTagName</code>
+                returns the structural element tag for this element.
+            </P>
+            
+                <h3>
+                    Syntax
+                </H3>
+                <P CLASS="CodeReference">
+                    LRESULT GetTagName (BSTR *pszTagName)
+                </P>
+            
+        
+        
+            <h2>
+                GetStdName
+            </H2>
+            <P CLASS="Body">
+                <code>                    pszStdName</code>
+                returns the standard role for this element. The standard roles are:
+            </P>
+            <P CLASS="CodeReference">
+                Document, Part, Art, Sect, Div, BlockQuote, Caption, TOC, TOCI, Index,
+                NonStruct, Private, Table, TR, TH, TD, L, LI, Lbl, LBody, P, H, H1, H2, H3, H4, H5, H6, Span, Quote,
+                Note, Reference, BibEntry, Code, Link, Figure, Formula,Form
+            </P>
+            <P CLASS="Body">
+                For details, see the <EM CLASS="Italic">
+                    PDF Reference, version 1.6</EM>
+                , section 10.7.3.
+            </P>
+            
+                <h3>
+                    Syntax
+                </H3>
+                <P CLASS="CodeReference">
+                    LRESULT GetStdName (BSTR *pszStdName)
+                </P>
+            
+        
+        
+            <h2>
+                GetID
+            </H2>
+            <P CLASS="Body">
+                <code>                    pszId</code>
+                returns the ID string associated with this element, if it has been defined.
+            </P>
+            <P CLASS="Body">
+                The <code>                    id</code>
+                value is not the same as the UID returned by <code>                    IAccID</code>
+                in the MSAA interface; it is an optional attribute of the PDF file itself. See Table 10.10 of section
+                10.6 of the <EM CLASS="Italic">
+                    PDF Reference, version 1.6</EM>
+                .
+            </P>
+            
+                <h3>
+                    Syntax
+                </H3>
+                <P CLASS="CodeReference">
+                    LRESULT GetID (BSTR *pszId)
+                </P>
+            
+        
+        
+            <h2>
+                GetAttribute
+            </H2>
+            <P CLASS="Body">
+                <code>                    pszAttrVal</code>
+                returns the value of the specified attribute for specified owner for this element. Owner can be <EM
+                    CLASS="Courier">
+                    NULL</EM>
+                or an empty string.
+            </P>
+            <P CLASS="TableBody">
+                If the element does not have the requested attribute, the method returns <EM
+                    CLASS="Courier">
+                    S_FALSE</EM>
+                .
+            </P>
+            <P CLASS="Body">
+                The set of owners and attributes is open-ended, but the standard structure
+                attributes for Tagged PDF are defined in section 10.7.4 of the <EM CLASS="Italic">
+                    PDF Reference, version 1.6</EM>
+                . See the table below for accessibility attributes.
+            </P>
+            
+                <h3>
+                    Syntax
+                </H3>
+                <P CLASS="CodeReference">
+                    LRESULT GetAttribute (BSTR pszAttr, BSTR pszOwner, BSTR *pszAttrVal)
+                </P>
+            
+            
+                <h3>
+                    Accessibility attributes
+                </H3>
+                <P CLASS="Body">
+                    Some of the attributes that are useful for assistive technology are
+                    listed here. For a complete list, see section 10.8 of the <EM CLASS="Italic">
+                        PDF Reference, version 1.6</EM>
+                    .
+                </P>
+                
+                    <H6 CLASS="TableAnchor">
+                        &nbsp;
+                    </H6>
+                    <TABLE BORDER="1">
+                        <TR>
+                            <TH ROWSPAN="1" COLSPAN="1">
+                                <P CLASS="TableHead">
+                                    Attribute
+                                </P>
+                            </TH>
+                            <TH ROWSPAN="1" COLSPAN="1">
+                                <P CLASS="TableHead">
+                                    Owner
+                                </P>
+                            </TH>
+                            <TH ROWSPAN="1" COLSPAN="1">
+                                <P CLASS="TableHead">
+                                    Value
+                                </P>
+                            </TH>
+                        </TR>
+                        <TR>
+                            <TD ROWSPAN="1" COLSPAN="1">
+                                <P CLASS="CodeReference">
+                                    Lang
+                                </P>
+                            </TD>
+                            <TD ROWSPAN="1" COLSPAN="1">
+                                <P CLASS="CodeReference">
+                                    &nbsp;
+                                </P>
+                            </TD>
+                            <TD ROWSPAN="1" COLSPAN="1">
+                                <P CLASS="TableBody">
+                                    ISO language code for text within this element.
+                                </P>
+                            </TD>
+                        </TR>
+                        <TR>
+                            <TD ROWSPAN="1" COLSPAN="1">
+                                <P CLASS="CodeReference">
+                                    Alt
+                                </P>
+                            </TD>
+                            <TD ROWSPAN="1" COLSPAN="1">
+                                <P CLASS="CodeReference">
+                                    &nbsp;
+                                </P>
+                            </TD>
+                            <TD ROWSPAN="1" COLSPAN="1">
+                                <P CLASS="TableBody">
+                                    Text containing an equivalent replacement for the
+                                    content of this element.
+                                </P>
+                                <P CLASS="TableBody">
+                                    Automatically incorporated into the value or text
+                                    content of the element or any of its ancestor elements.
+                                </P>
+                            </TD>
+                        </TR>
+                        <TR>
+                            <TD ROWSPAN="1" COLSPAN="1">
+                                <P CLASS="CodeReference">
+                                    ActualText
+                                </P>
+                            </TD>
+                            <TD ROWSPAN="1" COLSPAN="1">
+                                <P CLASS="CodeReference">
+                                    &nbsp;
+                                </P>
+                            </TD>
+                            <TD ROWSPAN="1" COLSPAN="1">
+                                <P CLASS="TableBody">
+                                    Text which is an exact replacement for the content of
+                                    this element, for example, the text of an illuminated character.
+                                </P>
+                                <P CLASS="TableBody">
+                                    Automatically incorporated into the value or text
+                                    content of the element or any of its ancestor elements.
+                                </P>
+                            </TD>
+                        </TR>
+                        <TR>
+                            <TD ROWSPAN="1" COLSPAN="1">
+                                <P CLASS="CodeReference">
+                                    E
+                                </P>
+                            </TD>
+                            <TD ROWSPAN="1" COLSPAN="1">
+                                <P CLASS="CodeReference">
+                                    &nbsp;
+                                </P>
+                            </TD>
+                            <TD ROWSPAN="1" COLSPAN="1">
+                                <P CLASS="TableBody">
+                                    The expanded form of the element's content, when it is
+                                    an abbreviation or acronym.
+                                </P>
+                            </TD>
+                        </TR>
+                        <TR>
+                            <TD ROWSPAN="1" COLSPAN="1">
+                                <P CLASS="CodeReference">
+                                    RowSpan
+                                </P>
+                            </TD>
+                            <TD ROWSPAN="1" COLSPAN="1">
+                                <P CLASS="CodeReference">
+                                    Table
+                                </P>
+                            </TD>
+                            <TD ROWSPAN="1" COLSPAN="1">
+                                <P CLASS="TableBody">
+                                    Number of rows spanned by the table cell.
+                                </P>
+                            </TD>
+                        </TR>
+                        <TR>
+                            <TD ROWSPAN="1" COLSPAN="1">
+                                <P CLASS="CodeReference">
+                                    ColSpan
+                                </P>
+                            </TD>
+                            <TD ROWSPAN="1" COLSPAN="1">
+                                <P CLASS="CodeReference">
+                                    Table
+                                </P>
+                            </TD>
+                            <TD ROWSPAN="1" COLSPAN="1">
+                                <P CLASS="TableBody">
+                                    Number of columns spanned by the table cell.
+                                </P>
+                            </TD>
+                        </TR>
+                        <TR>
+                            <TD ROWSPAN="1" COLSPAN="1">
+                                <P CLASS="CodeReference">
+                                    Headers
+                                </P>
+                            </TD>
+                            <TD ROWSPAN="1" COLSPAN="1">
+                                <P CLASS="CodeReference">
+                                    Table
+                                </P>
+                            </TD>
+                            <TD ROWSPAN="1" COLSPAN="1">
+                                <P CLASS="TableBody">
+                                    Array of IDs of Table Header (TH) cells associated with
+                                    this table cell (TD or TH).
+                                </P>
+                            </TD>
+                        </TR>
+                        <TR>
+                            <TD ROWSPAN="1" COLSPAN="1">
+                                <P CLASS="CodeReference">
+                                    Scope
+                                </P>
+                            </TD>
+                            <TD ROWSPAN="1" COLSPAN="1">
+                                <P CLASS="CodeReference">
+                                    Table
+                                </P>
+                            </TD>
+                            <TD ROWSPAN="1" COLSPAN="1">
+                                <P CLASS="TableBody">
+                                    The scope of this table header cell: <EM
+                                        CLASS="Courier">
+                                        Row</EM>
+                                    , <code>                                        Column</code>
+                                    , or <code>                                        Both</code>
+                                    .
+                                </P>
+                            </TD>
+                        </TR>
+                        <TR>
+                            <TD ROWSPAN="1" COLSPAN="1">
+                                <P CLASS="CodeReference">
+                                    Summary
+                                </P>
+                            </TD>
+                            <TD ROWSPAN="1" COLSPAN="1">
+                                <P CLASS="CodeReference">
+                                    Table
+                                </P>
+                            </TD>
+                            <TD ROWSPAN="1" COLSPAN="1">
+                                <P CLASS="TableBody">
+                                    Text that describes the table's purpose and structure,
+                                    for use in non-visual rendering such as speech or Braille.
+                                </P>
+                            </TD>
+                        </TR>
+                    </TABLE>
+                
+            
+        
+    
+    
+        <h1>
+            IPDDomWord methods
+        </H1>
+        <P CLASS="Body">
+            <code>                IPDDomWord</code>
+            defines additional methods that apply only to individual words in the document.
+        </P>
+        
+            <h2>
+                LastWordOfLine
+            </H2>
+            <P CLASS="Body">
+                If this is the last word in a line on the page, <code>                    isLast</code>
+                returns <code>                    true</code>
+                . Use this function to determine where the line breaks occur in text. Note that line breaks are inserted
+                into the text content for elements.
+            </P>
+            
+                <h3>
+                    Syntax
+                </H3>
+                <P CLASS="CodeReference">
+                    LRESULT LastWordOfLine (BOOL *isLast)
+                </P>
+            
+        
+    
+    
+        <h1>
+            IPDDomGroupInfo method
+        </H1>
+        <P CLASS="Body">
+            <code>                IPDDomGroupInfo</code>
+            defines an additional method that applies to radio buttons, list boxes, and combo boxes.
+        </P>
+        
+            <h2>
+                GetGroupPosition
+            </H2>
+            <P CLASS="Body">
+                <code>                    groupSize</code>
+                returns the number of items in the radio button set, the list, or the combo box drop-down list. <EM
+                    CLASS="Courier">
+                    position</EM>
+                returns the 1-based index of the node in that set of values. That is, a value of 1 for <EM
+                    CLASS="Courier">
+                    position</EM>
+                indicates the first value in the set.
+            </P>
+            
+                <h3>
+                    Syntax
+                </H3>
+                <P CLASS="CodeReference">
+                    GetGroupPosition (long *groupSize, long *position)
+                </P>
+            
+        
+    
+</BODY>
+
+</HTML>
