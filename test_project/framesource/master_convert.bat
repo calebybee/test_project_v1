@@ -15,27 +15,19 @@ python loop_rst_regex.py
 :: Run pandoc on all HTML files. 
 
 
-for /r  %%i in (*.htm *.html) do pandoc -o %%i.rst %%i --wrap=none
+for /R %framedir% %%f in (*.htm *.html) do pandoc --lua-filter=not-in-format.lua -o %output%%%~nf.rst %%f --wrap=none
 
 :: remove unwanted files
 del /s /q *.css
 :: del /s /q *.html // don't need the html when this script all works.
 
 
-:: for /r  %%i in (*.rst) do move %%i %output%
-
-for /r  %%i in (*.rst) do xcopy /y *html.rst %output%*.rst
-
-
-
 cd %output%
 
-:: rename here. . . . 
+python postprocess_rst_regex.py 
 
 cd %framedir%
 
-
-pause
 
 
 

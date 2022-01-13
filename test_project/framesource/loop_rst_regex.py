@@ -19,7 +19,7 @@ for file_name in os.listdir(work_dir):
             # doesn't cover enough cases: a_tag = re.sub(r'<A\sNAME=\"pgfId-\d+\"></A>', '', a_tag)
             a_tag = re.sub(r'<A NAME=(.*)></A>', '', a_tag)
             a_tag = re.sub(r'<A NAME=\"marker-\d+\"></A>', '', a_tag)
-            a_tag = re.sub(r'<P CLASS=\"FM1Head\">\n([a-zA-Z0-9 ]*)</P>', rf'{title_wrapper}\n\1\n{title_wrapper}\n\n', a_tag)
+            a_tag = re.sub(r'<P CLASS=\"FM1Head\">\s*(.*)\s*</P>', rf'{title_wrapper}\n\1\n{title_wrapper}\n\n', a_tag)            
             a_tag = re.sub(r'<H4 CLASS=\"FM1Head\">\n([a-zA-Z0-9 ]*)</H4>', rf'{title_wrapper}\n\1\n{title_wrapper}\n\n', a_tag)
             a_tag = re.sub(r'<H1 CLASS="FM2Head-Top">', '<h1>', a_tag)
             a_tag = re.sub(r'<H1 CLASS="FM2Head">', '<h1>', a_tag)
@@ -47,12 +47,16 @@ for file_name in os.listdir(work_dir):
             a_tag = re.sub(r'<h3>\n(Properties)( )*<\/H3>', r'</pre>\n\n<b>\1</b>\n', a_tag) 
             a_tag = re.sub(r'<H5 CLASS=\"TableAnchor\">\n&nbsp;</H5>', r'', a_tag) 
             # Note styles
-            a_tag = re.sub(r'<H\d CLASS=\"NoteTip\">\n(.*)</H\d>\n<P CLASS=\"Body\">\n(.*)</P>', r'\n.. note:: \1\n', a_tag) 
-            a_tag = re.sub(r'<H\d CLASS=\"Note\">\n(.*)</H\d>\n<P CLASS=\"Body\">\n(.*)</P>', r'\n.. note:: \1\n', a_tag)
-            a_tag = re.sub(r'<H\d CLASS=\"NoteIndent\">\n(.*)</H\d>\n<P CLASS=\"Body\">\n(.*)</P>', r'\n.. note:: \1\n', a_tag)
-            a_tag = re.sub(r'<H\d CLASS=\"NoteCaution\">\n(.*)</H\d>\n<P CLASS=\"Body\">\n(.*)</P>', r'\n.. caution:: \1\n', a_tag)
-            # Bullet styles
-            a_tag = re.sub(r'(?s)</LI>\n\s*<UL>(.*)\n\s*</UL>', r'<UL>\1\n\t\t</LI>\n\t</UL>', a_tag)
+            a_tag = re.sub(r'<P CLASS=\"Note\">([\s\S]*?)</P>', r'<div CLASS="Note not-in-format">\1</div>', a_tag)
+            a_tag = re.sub(r'<P CLASS=\"NoteIndent\">([\s\S]*?)</P>', r'<div CLASS="NoteIndent not-in-format">\1</div>', a_tag)
+            a_tag = re.sub(r'<P CLASS=\"NoteTip\">([\s\S]*?)</P>', r'<div CLASS="NoteTip not-in-format">\1</div>', a_tag)
+            a_tag = re.sub(r'<P CLASS=\"NoteCaution\">([\s\S]*?)</P>', r'<div CLASS="NoteCaution not-in-format">\1</div>', a_tag)
+            # a_tag = re.sub(r'<H\d CLASS=\"NoteTip\">\n(.*)</H\d>\n<P CLASS=\"Body\">\n(.*)</P>', r'\n.. note:: \1\n', a_tag) 
+            # a_tag = re.sub(r'<H\d CLASS=\"Note\">\n(.*)</H\d>\n<P CLASS=\"Body\">\n(.*)</P>', r'\n.. note:: \1\n', a_tag)
+            # a_tag = re.sub(r'<H\d CLASS=\"NoteIndent\">\n(.*)</H\d>\n<P CLASS=\"Body\">\n(.*)</P>', r'\n.. note:: \1\n', a_tag)
+            # a_tag = re.sub(r'<H\d CLASS=\"NoteCaution\">\n(.*)</H\d>\n<P CLASS=\"Body\">\n(.*)</P>', r'\n.. caution:: \1\n', a_tag)
+            # Bullet Styles
+            a_tag = re.sub(r'(?s)</LI>\s*<UL>(.*?)\s*</UL>', r'<UL>\1\n\t\t</UL>\n\t\t</LI>', a_tag)
 
 
             f.seek(0)
