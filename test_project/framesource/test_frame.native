@@ -1,0 +1,507 @@
+[ Para
+    [ Str
+        "******************************************************"
+    , SoftBreak
+    , Str "Test"
+    , Space
+    , Str "Framemaker"
+    , Space
+    , Str "file"
+    , Space
+    , Str "Title"
+    , SoftBreak
+    , Str
+        "******************************************************"
+    ]
+, Para
+    [ Str "Paragraph"
+    , Space
+    , Str "Paragraph"
+    , Space
+    , Str "Paragraph"
+    , Space
+    , Str "Paragraph"
+    , Space
+    , Str "Paragraph"
+    ]
+, Div ( "" , [ "note" ] , [] ) [ Plain [ Str "Note" ] ]
+, Para [ Str "kkk" ]
+, Div
+    ( "" , [ "caution" ] , [] )
+    [ Plain [ Str "Note" , Space , Str "caution" ] ]
+, Para [ Str "kkk" ]
+, Div
+    ( "" , [ "tip" ] , [] )
+    [ Plain [ Str "Note" , Space , Str "tip" ] ]
+, Para [ Str "dkdkd" ]
+, Div
+    ( "" , [ "warning" ] , [] )
+    [ Plain [ Str "Note" , Space , Str "indent" ] ]
+, Para
+    [ Str "Lorem"
+    , Space
+    , Str "Ipsum"
+    , Space
+    , Str "is"
+    , Space
+    , Str "simply"
+    , Space
+    , Str "dummy"
+    , Space
+    , Str "text"
+    , Space
+    , Str "of"
+    , Space
+    , Str "the"
+    , Space
+    , Str "printing"
+    , Space
+    , Str "and"
+    , Space
+    , Str "typesetting"
+    , Space
+    , Str "industry."
+    , Space
+    , Str "Lorem"
+    , SoftBreak
+    , Str "Ipsum"
+    , Space
+    , Str "has"
+    , Space
+    , Str "been"
+    , Space
+    , Str "the"
+    , Space
+    , Str "industry's"
+    , Space
+    , Str "standard"
+    , Space
+    , Str "dummy"
+    , Space
+    , Str "text"
+    , Space
+    , Str "ever"
+    , Space
+    , Str "since"
+    , Space
+    , Str "the"
+    , Space
+    , Str "1500s,"
+    , Space
+    , Str "when"
+    , Space
+    , Str "an"
+    , Space
+    , Str "unknown"
+    , Space
+    , Str "printer"
+    , Space
+    , Str "took"
+    , Space
+    , Str "a"
+    , Space
+    , Str "galley"
+    , Space
+    , Str "of"
+    , SoftBreak
+    , Str "type"
+    , Space
+    , Str "and"
+    , Space
+    , Str "scrambled"
+    , Space
+    , Str "it"
+    , Space
+    , Str "to"
+    , Space
+    , Str "make"
+    , Space
+    , Str "a"
+    , Space
+    , Str "type"
+    , Space
+    , Str "specimen"
+    , Space
+    , Str "book."
+    ]
+, BulletList
+    [ [ Plain [ Str "one" ] ]
+    , [ Plain [ Str "one" ] ]
+    , [ Plain [ Str "one" ]
+      , BulletList
+          [ [ Plain [ Str "two" ] ]
+          , [ Plain [ Str "two" ] ]
+          , [ Plain [ Str "two" ] ]
+          ]
+      ]
+    ]
+, Para
+    [ Str "Lorem"
+    , Space
+    , Str "Ipsum"
+    , Space
+    , Str "is"
+    , Space
+    , Str "simply"
+    , Space
+    , Str "dummy"
+    , Space
+    , Str "text"
+    , Space
+    , Str "of"
+    , Space
+    , Str "the"
+    , Space
+    , Str "printing"
+    , Space
+    , Str "and"
+    , Space
+    , Str "typesetting"
+    , Space
+    , Str "industry."
+    , Space
+    , Str "Lorem"
+    , SoftBreak
+    , Str "Ipsum"
+    , Space
+    , Str "has"
+    , Space
+    , Str "been"
+    , Space
+    , Str "the"
+    , Space
+    , Str "industry's"
+    , Space
+    , Str "standard"
+    , Space
+    , Str "dummy"
+    , Space
+    , Str "text"
+    , Space
+    , Str "ever"
+    , Space
+    , Str "since"
+    , Space
+    , Str "the"
+    , Space
+    , Str "1500s,"
+    , Space
+    , Str "when"
+    , Space
+    , Str "an"
+    , Space
+    , Str "unknown"
+    , Space
+    , Str "printer"
+    , Space
+    , Str "took"
+    , Space
+    , Str "a"
+    , Space
+    , Str "galley"
+    , Space
+    , Str "of"
+    , SoftBreak
+    , Str "type"
+    , Space
+    , Str "and"
+    , Space
+    , Str "scrambled"
+    , Space
+    , Str "it"
+    , Space
+    , Str "to"
+    , Space
+    , Str "make"
+    , Space
+    , Str "a"
+    , Space
+    , Str "type"
+    , Space
+    , Str "specimen"
+    , Space
+    , Str "book."
+    ]
+, BulletList
+    [ [ Plain [ Str "two" ] ] , [ Plain [ Str "two" ] ] ]
+, Para
+    [ Str "Lorem"
+    , Space
+    , Str "Ipsum"
+    , Space
+    , Str "is"
+    , Space
+    , Str "simply"
+    , Space
+    , Str "dummy"
+    , Space
+    , Str "text"
+    , Space
+    , Str "of"
+    , Space
+    , Str "the"
+    , Space
+    , Str "printing"
+    , Space
+    , Str "and"
+    , Space
+    , Str "typesetting"
+    , Space
+    , Str "industry."
+    , Space
+    , Str "Lorem"
+    , SoftBreak
+    , Str "Ipsum"
+    , Space
+    , Str "has"
+    , Space
+    , Str "been"
+    , Space
+    , Str "the"
+    , Space
+    , Str "industry's"
+    , Space
+    , Str "standard"
+    , Space
+    , Str "dummy"
+    , Space
+    , Str "text"
+    , Space
+    , Str "ever"
+    , Space
+    , Str "since"
+    , Space
+    , Str "the"
+    , Space
+    , Str "1500s,"
+    , Space
+    , Str "when"
+    , Space
+    , Str "an"
+    , Space
+    , Str "unknown"
+    , Space
+    , Str "printer"
+    , Space
+    , Str "took"
+    , Space
+    , Str "a"
+    , Space
+    , Str "galley"
+    , Space
+    , Str "of"
+    , SoftBreak
+    , Str "type"
+    , Space
+    , Str "and"
+    , Space
+    , Str "scrambled"
+    , Space
+    , Str "it"
+    , Space
+    , Str "to"
+    , Space
+    , Str "make"
+    , Space
+    , Str "a"
+    , Space
+    , Str "type"
+    , Space
+    , Str "specimen"
+    , Space
+    , Str "book."
+    ]
+, BulletList
+    [ [ Plain [ Str "one" ] ]
+    , [ Plain [ Str "one" ]
+      , BulletList
+          [ [ Plain [ Str "two" ] ] , [ Plain [ Str "two" ] ] ]
+      ]
+    , [ Plain [ Str "one" ] ]
+    ]
+, Para
+    [ Str "Lorem"
+    , Space
+    , Str "Ipsum"
+    , Space
+    , Str "is"
+    , Space
+    , Str "simply"
+    , Space
+    , Str "dummy"
+    , Space
+    , Str "text"
+    , Space
+    , Str "of"
+    , Space
+    , Str "the"
+    , Space
+    , Str "printing"
+    , Space
+    , Str "and"
+    , Space
+    , Str "typesetting"
+    , Space
+    , Str "industry."
+    , Space
+    , Str "Lorem"
+    , SoftBreak
+    , Str "Ipsum"
+    , Space
+    , Str "has"
+    , Space
+    , Str "been"
+    , Space
+    , Str "the"
+    , Space
+    , Str "industry's"
+    , Space
+    , Str "standard"
+    , Space
+    , Str "dummy"
+    , Space
+    , Str "text"
+    , Space
+    , Str "ever"
+    , Space
+    , Str "since"
+    , Space
+    , Str "the"
+    , Space
+    , Str "1500s,"
+    , Space
+    , Str "when"
+    , Space
+    , Str "an"
+    , Space
+    , Str "unknown"
+    , Space
+    , Str "printer"
+    , Space
+    , Str "took"
+    , Space
+    , Str "a"
+    , Space
+    , Str "galley"
+    , Space
+    , Str "of"
+    , SoftBreak
+    , Str "type"
+    , Space
+    , Str "and"
+    , Space
+    , Str "scrambled"
+    , Space
+    , Str "it"
+    , Space
+    , Str "to"
+    , Space
+    , Str "make"
+    , Space
+    , Str "a"
+    , Space
+    , Str "type"
+    , Space
+    , Str "specimen"
+    , Space
+    , Str "book."
+    ]
+, Header
+    1
+    ( "iheading2_top-style" , [] , [] )
+    [ Str "IHeading2_Top" , Space , Str "style" ]
+, Para
+    [ Str "PDF"
+    , SoftBreak
+    , Str "DOM"
+    , Space
+    , Str "hierarchy."
+    ]
+, Header
+    2
+    ( "head-style" , [] , [] )
+    [ Str "3Head" , Space , Str "style" ]
+, Para
+    [ Str "Defines"
+    , Space
+    , Str "the"
+    , Space
+    , Str "type"
+    , Space
+    , Str "of"
+    , Space
+    , Str "a"
+    , Space
+    , Str "node"
+    , Space
+    , Str "in"
+    , Space
+    , Str "the"
+    , Space
+    , Str "PDF"
+    , Space
+    , Str "DOM"
+    , Space
+    , Str "hierarchy"
+    , Space
+    , Str "returned"
+    , Space
+    , Str "by"
+    , SoftBreak
+    , Emph [ Str "GetType" ]
+    , SoftBreak
+    , Str "."
+    ]
+, Header 3 ( "syntax" , [] , [] ) [ Str "Syntax" ]
+, Para
+    [ Str "typedef" , Space , Str "enum" , Space , Str "{" ]
+, Para
+    [ Str "CPDDomNode_Document"
+    , Space
+    , Str "="
+    , Space
+    , Str "1,"
+    ]
+, Para
+    [ Str "CPDDomNode_Page"
+    , Space
+    , Str "="
+    , Space
+    , Str "2,"
+    ]
+, Para
+    [ Str "CPDDomNode_StructElement"
+    , Space
+    , Str "="
+    , Space
+    , Str "3,"
+    ]
+, Para
+    [ Str "CPDDomNode_Text"
+    , Space
+    , Str "="
+    , Space
+    , Str "4,"
+    ]
+, Para
+    [ Str "CPDDomNode_Word"
+    , Space
+    , Str "="
+    , Space
+    , Str "5,"
+    ]
+, Para
+    [ Str "CPDDomNode_Char"
+    , Space
+    , Str "="
+    , Space
+    , Str "6,"
+    ]
+, Para
+    [ Str "CPDDomNode_Graphic"
+    , Space
+    , Str "="
+    , Space
+    , Str "7,"
+    ]
+]

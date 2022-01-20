@@ -1,0 +1,4400 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN"><HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+<META NAME="GENERATOR" CONTENT="Adobe FrameMaker 2020/HTML Export Filter">
+<LINK REL="STYLESHEET" HREF="test_with_code.css" CHARSET="UTF-8" TYPE="text/css">
+<TITLE> Acrobat implementation of IAccessible objects</TITLE></HEAD>
+<BODY>
+<P CLASS="FM1Head">
+<A NAME="pgfId-1500433"></A>Reading PDF Files Through MSAA</P>
+<P CLASS="Body">
+<A NAME="pgfId-1500436"></A>Microsoft Active Accessibility defines the <EM CLASS="Courier">
+IAccessible</EM>
+<A NAME="marker-1517008"></A> interface to applications. This interface consists of a set of methods and properties that are defined in the MSAA documentation. </P>
+<P CLASS="Body">
+<A NAME="pgfId-1500437"></A>Acrobat implements and exports a set of <EM CLASS="Courier">
+IAccessible</EM>
+ objects of different types to represent a document, its pages, and other elements of the document hierarchy. </P>
+<P CLASS="Body">
+<A NAME="pgfId-1500449"></A>An MSAA client can retrieve an <EM CLASS="Courier">
+IAccessible</EM>
+ object for a user interface element in the following four ways:</P>
+<UL>
+<LI CLASS="Bullet1">
+<A NAME="pgfId-1500450"></A>Set a <EM CLASS="Courier">
+WinEvent</EM>
+ hook, receive a notification, and call <EM CLASS="Courier">
+AccessibleObjectFromEvent</EM>
+ to retrieve an <EM CLASS="Courier">
+IAccessible</EM>
+ interface pointer for the user interface element that generated the event. See <A HREF="AccessOverview.html#21082" CLASS="XRef">See Handling event notifications</A> for details.</LI>
+<LI CLASS="Bullet1">
+<A NAME="pgfId-1500454"></A>Call <EM CLASS="Courier">
+AccessibleObjectFromWindow</EM>
+ and pass the user interface element's window handle. Each open document in Acrobat is associated with its own window handle.</LI>
+<LI CLASS="Bullet1">
+<A NAME="pgfId-1500455"></A>Call <EM CLASS="Courier">
+AccessibleObjectFromPoint</EM>
+ and pass a screen location that lies within the user interface element's bounding rectangle.</LI>
+<LI CLASS="Bullet1">
+<A NAME="pgfId-1500456"></A>Call an <EM CLASS="Courier">
+IAccessible</EM>
+ method such as <EM CLASS="Courier">
+accNavigate</EM>
+ or <EM CLASS="Courier">
+get_accParent</EM>
+ to move to a different <EM CLASS="Courier">
+IAccessible</EM>
+ object.</LI>
+</UL>
+<DIV>
+<H1 CLASS="FM2Head">
+<A NAME="pgfId-1500457"></A>Acrobat implementation of IAccessible objects</H1>
+<P CLASS="Body">
+<A NAME="pgfId-1500458"></A>Each type of <EM CLASS="Courier">
+IAccessible</EM>
+ object has a different implementation of the standard methods:</P>
+<UL>
+<LI CLASS="Bullet1">
+<A NAME="pgfId-1500459"></A><A NAME="marker-1517015"></A>Links, <A NAME="marker-1517016"></A>tables, and <A NAME="marker-1517017"></A>form fields are explicitly identified through MSAA.</LI>
+<LI CLASS="Bullet1">
+<A NAME="pgfId-1500460"></A><A NAME="marker-1517018"></A>Headers, <A NAME="marker-1517019"></A>paragraphs, and other elements of document structure are only represented implicitly.</LI>
+</UL>
+<P CLASS="Note">
+<A NAME="pgfId-1500463"></A>These elements are explicit in the DOM interface; see <A HREF="Access_DOM.html#30124" CLASS="XRef">See Reading PDF Files Through the DOM Interface</A>.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1500465"></A>For each document, Acrobat builds a tree of <EM CLASS="Courier">
+IAccessible</EM>
+ objects representing the document and its internal structure. Because there is just one window handle associated with the document, Acrobat posts all event notifications to that window. In each notification, a <EM CLASS="Courier">
+childID</EM>
+ identifies an <EM CLASS="Courier">
+IAccessible</EM>
+ object for an element in the document. For example, when the user tabs to the next link, the <EM CLASS="Courier">
+EVENT_OBJECT_FOCUS</EM>
+ notification includes a <EM CLASS="Courier">
+childID</EM>
+ that is the UID of the link object. See <A HREF="AccessOverview.html#21082" CLASS="XRef">See Handling event notifications</A>.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1500469"></A>The following interfaces are exported from the <EM CLASS="Courier">
+IAccessible</EM>
+ object by Acrobat:</P>
+</DIV>
+<DIV>
+<H1 CLASS="FM2Head-Top">
+<A NAME="pgfId-1500471"></A><A NAME="10950"></A><A NAME="marker-1517027"></A>IGetPDDomNode interface </H1>
+<P CLASS="Body">
+<A NAME="pgfId-1513762"></A>This interface exports one function, <EM CLASS="Courier">
+get_PDDomNode</EM>
+, which returns a DOM object. The methods described in <A HREF="Access_DOM.html#30124" CLASS="XRef">See Reading PDF Files Through the DOM Interface</A>” can then be used on this object.</P>
+<DIV>
+<H2 CLASS="FM3Head">
+<A NAME="pgfId-1513768"></A>get_PDDomNode</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1513772"></A>Returns a DOM object. For more information, see <A HREF="Access_DOM.html#30124" CLASS="XRef">See Reading PDF Files Through the DOM Interface</A>.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1513685"></A><EM CLASS="Courier">
+varID</EM>
+ is the same as for the other MSAA methods (see <A HREF="test_with_code.html#89440" CLASS="XRef">See Descriptive properties and methods</A>)</P>
+<DIV>
+<H3 CLASS="FM4Head-NoTOC">
+<A NAME="pgfId-1513750"></A>Syntax</H3>
+<P CLASS="CodeReference">
+<A NAME="pgfId-1513790"></A>HRESULT get_PDDomNode(</P>
+<P CLASS="CodeReference">
+<A NAME="pgfId-1513791"></A>VARIANT varID, </P>
+<P CLASS="CodeReference">
+<A NAME="pgfId-1513792"></A>IPDDomNode **ppDispDoc);</P>
+</DIV>
+</DIV>
+</DIV>
+<DIV>
+<H1 CLASS="FM2Head">
+<A NAME="pgfId-1500498"></A><A NAME="marker-1517022"></A><A NAME="marker-1517028"></A>ISelectText interface</H1>
+<P CLASS="Body">
+<A NAME="pgfId-1500499"></A>In Acrobat 7.0, the <EM CLASS="Courier">
+ISelectText</EM>
+ interface is an interface exported by the <EM CLASS="Courier">
+IAccessible</EM>
+ objects. It exports one function, <EM CLASS="Courier">
+selectText</EM>
+, that sets the text selection, but specifies the end location via <EM CLASS="Courier">
+IAccessible</EM>
+ objects instead of DOM nodes. The <EM CLASS="Courier">
+ISelectText</EM>
+ interface is available from the root <EM CLASS="Courier">
+IAccessible</EM>
+ object.</P>
+<DIV>
+<H2 CLASS="FM3Head">
+<A NAME="pgfId-1513811"></A>selectText</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1505182"></A>Sets the text selection. <EM CLASS="Courier">
+startAccID</EM>
+ and <EM CLASS="Courier">
+endAccID</EM>
+ are the <EM CLASS="Courier">
+accID</EM>
+ identifiers for the starting and ending <EM CLASS="Courier">
+IAccessible</EM>
+ elements, and <EM CLASS="Courier">
+startIndex</EM>
+ and <EM CLASS="Courier">
+endIndex</EM>
+ are zero-based indexes into the text of those <EM CLASS="Courier">
+IAccessible</EM>
+ objects.</P>
+<DIV>
+<H3 CLASS="FM4Head-NoTOC">
+<A NAME="pgfId-1513865"></A>Syntax</H3>
+
+
+<pre>
+<P CLASS="CodeReference">
+<A NAME="pgfId-1513890"></A>LRESULT selectText(</P>
+<P CLASS="CodeReference">
+<A NAME="pgfId-1513891"></A>long startAccID,</P>
+<P CLASS="CodeReference">
+<A NAME="pgfId-1513892"></A>long startIndex,</P>
+<P CLASS="CodeReference">
+<A NAME="pgfId-1513893"></A>long endAccID,</P>
+<P CLASS="CodeReference">
+<A NAME="pgfId-1513899"></A>long endIndex);</P>
+</pre>
+
+</DIV>
+</DIV>
+</DIV>
+<DIV>
+<H1 CLASS="FM2Head-Top">
+<A NAME="pgfId-1513919"></A><A NAME="99842"></A><A NAME="marker-1517029"></A>Identifying IAccessible objects in a document</H1>
+<P CLASS="Body">
+<A NAME="pgfId-1500519"></A>You can identify the type of an <EM CLASS="Courier">
+IAccessible</EM>
+ object by using the <EM CLASS="Courier">
+get_accRole</EM>
+ method to get its Role attribute. However, you must also distinguish individual objects from others of the same type. You can do this by means of a unique identifier (UID) defined by Acrobat. </P>
+<P CLASS="Body">
+<A NAME="pgfId-1513927"></A>The <EM CLASS="Courier">
+IAccessible</EM>
+ objects defined by Acrobat export a private interface, <EM CLASS="Courier">
+IAccID</EM>
+, defined in the file <EM CLASS="Courier">
+IAccID.h</EM>
+. It contains one function, <EM CLASS="Courier">
+get_accID</EM>
+. Use this UID to determine when two <EM CLASS="Courier">
+IAccessible</EM>
+ objects refer to the same element in the document.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1500521"></A>When a value-change notification or a focus notification has a non-zero <EM CLASS="Courier">
+childID</EM>
+, the value of <EM CLASS="Courier">
+childID</EM>
+ is the UID of one of the objects on the page or document. Use the UID to uniquely identify the object that is the target of the notification. </P>
+<DIV>
+<H2 CLASS="FM3Head">
+<A NAME="pgfId-1500522"></A>get_accID</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1516486"></A>Returns an identifier that is unique within the open document or page.</P>
+<DIV>
+<H3 CLASS="FM4Head-NoTOC">
+<A NAME="pgfId-1513403"></A>Syntax </H3>
+<P CLASS="CodeReference">
+<A NAME="pgfId-1500523"></A>HRESULT get_accID(long *id);</P>
+</DIV>
+<DIV>
+<H3 CLASS="FM4Head-NoTOC">
+<A NAME="pgfId-1500529"></A>Parameters</H3>
+<DIV>
+<H6 CLASS="TableAnchor">
+<A NAME="pgfId-1507070"></A>&nbsp;</H6>
+<TABLE BORDER="1">
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1507091"></A>id</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1507093"></A>(Filled by the method) Returns the unique identifier of the <EM CLASS="Courier">
+IAccessible</EM>
+ object. Must not be <EM CLASS="Courier">
+NULL</EM>
+. </P>
+</TD>
+</TR>
+</TABLE>
+</DIV>
+</DIV>
+<DIV>
+<H3 CLASS="FM4Head-NoTOC">
+<A NAME="pgfId-1500530"></A>Returns</H3>
+<P CLASS="Body">
+<A NAME="pgfId-1500531"></A>Always returns <EM CLASS="Courier">
+s_ok</EM>
+.</P>
+</DIV>
+<DIV>
+<H3 CLASS="FM4Head-NoTOC">
+<A NAME="pgfId-1500532"></A>Example</H3>
+<P CLASS="CodeReference">
+<A NAME="pgfId-1500533"></A>	IAccID *pID;</P>
+<P CLASS="CodeReference">
+<A NAME="pgfId-1500534"></A>	long uid;</P>
+<P CLASS="CodeReference">
+<A NAME="pgfId-1500535"></A>	/* query for the IAccID interface */</P>
+<P CLASS="CodeReference">
+<A NAME="pgfId-1500536"></A>	RESULT hr = pObj-&gt;QueryInterface (IID_IAccID, </P>
+<P CLASS="CodeReference">
+<A NAME="pgfId-1500537"></A>											reinterpret_cast&lt;void **&gt;(&amp;pID));</P>
+<P CLASS="CodeReference">
+<A NAME="pgfId-1500538"></A>	if (!FAILED(hr)) </P>
+<P CLASS="CodeReference">
+<A NAME="pgfId-1500539"></A>	{</P>
+<P CLASS="CodeReference">
+<A NAME="pgfId-1500540"></A>			pID-&gt;get_accID(&amp;uid);</P>
+<P CLASS="CodeReference">
+<A NAME="pgfId-1500541"></A>			pID-&gt;Release();</P>
+<P CLASS="CodeReference">
+<A NAME="pgfId-1500542"></A>	}</P>
+<P CLASS="Note">
+<A NAME="pgfId-1517804"></A>If you obtained the <EM CLASS="Courier">
+IAccessible</EM>
+ object via a call to <EM CLASS="Courier">
+AccessibleObjectFrom</EM>
+<EM CLASS="CourierItalic">
+XXX</EM>
+, it is not possible to query directly for this private interface. In that case, you must use this alternate code:</P>
+<P CLASS="CodeReference">
+<A NAME="pgfId-1500545"></A>	IServiceProvider *sp = NULL;</P>
+<P CLASS="CodeReference">
+<A NAME="pgfId-1500546"></A>	hr = n-&gt;QueryInterface(IID_IServiceProvider, (LPVOID*)&amp;sp);</P>
+<P CLASS="CodeReference">
+<A NAME="pgfId-1500547"></A>	if (SUCCEEDED(hr) &amp;&amp; sp) {</P>
+<P CLASS="CodeReference">
+<A NAME="pgfId-1500548"></A>			hr = sp-&gt;QueryService(SID_AccID, IID_IAccID, (LPVOID*)&amp;pID);</P>
+<P CLASS="CodeReference">
+<A NAME="pgfId-1500549"></A>			sp-&gt;Release();</P>
+<P CLASS="CodeReference">
+<A NAME="pgfId-1500550"></A>	}</P>
+</DIV>
+</DIV>
+</DIV>
+<DIV>
+<H1 CLASS="FM2Head-Top">
+<A NAME="pgfId-1500552"></A><A NAME="29922"></A>IAccessible method summary</H1>
+<P CLASS="Body">
+<A NAME="pgfId-1518251"></A>This section provides a brief syntax summary of the <EM CLASS="Courier">
+IAccessible</EM>
+<A NAME="marker-1517030"></A> interface methods as defined by MSAA. All methods return <EM CLASS="Courier">
+HRESULT</EM>
+. The methods and properties are organized into the following groups:</P>
+<UL>
+<LI CLASS="Bullet1">
+<A NAME="pgfId-1514594"></A><A HREF="test_with_code.html#73526" CLASS="XRef">See Navigation and hierarchy</A></LI>
+<LI CLASS="Bullet1">
+<A NAME="pgfId-1514607"></A><A HREF="test_with_code.html#89440" CLASS="XRef">See Descriptive properties and methods</A></LI>
+<LI CLASS="Bullet1">
+<A NAME="pgfId-1514849"></A><A HREF="test_with_code.html#22290" CLASS="XRef">See Selection and focus</A></LI>
+<LI CLASS="Bullet1">
+<A NAME="pgfId-1514850"></A><A HREF="test_with_code.html#57514" CLASS="XRef">See Spatial mapping</A></LI>
+</UL>
+</DIV>
+<DIV>
+<H1 CLASS="FM2Head">
+<A NAME="pgfId-1514852"></A><A NAME="73526"></A>Navigation and hierarchy</H1>
+<P CLASS="Body">
+<A NAME="pgfId-1518933"></A>This section provides information on the APIs used in <A NAME="marker-1518973"></A>navigation and to traverse the <A NAME="marker-1518974"></A>hierarchy.</P>
+<DIV>
+<H2 CLASS="FM3Head">
+<A NAME="pgfId-1514276"></A>accNavigate</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1514277"></A>Traverses to another user interface element within a container and retrieves the object. All visual objects support this method.</P>
+<DIV>
+<H3 CLASS="FM4Head-NoTOC">
+<A NAME="pgfId-1514278"></A>Syntax</H3>
+<P CLASS="CodeReference">
+<A NAME="pgfId-1514484"></A>accNavigate (long navDir, VARIANT varStart, VARIANT* pvarEnd);</P>
+</DIV>
+<DIV>
+<H3 CLASS="FM4Head-NoTOC">
+<A NAME="pgfId-1514577"></A>Properties</H3>
+<DIV>
+<H6 CLASS="TableAnchor">
+<A NAME="pgfId-1514511"></A>&nbsp;</H6>
+<TABLE BORDER="1">
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1514488"></A><EM CLASS="Italic">
+navDir</EM>
+ [in]</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1514490"></A>The direction to navigate, in spatial order or logical order. These are the spatial navigation constants:</P>
+<P CLASS="CodeReference">
+<A NAME="pgfId-1514491"></A>	NAVDIR_UP</P>
+<P CLASS="CodeReference">
+<A NAME="pgfId-1514492"></A>	NAVDIR_DOWN</P>
+<P CLASS="CodeReference">
+<A NAME="pgfId-1514493"></A>	NAVDIR_RIGHT</P>
+<P CLASS="CodeReference">
+<A NAME="pgfId-1514494"></A>	NAVDIR_LEFT</P>
+<P CLASS="TableBody">
+<A NAME="pgfId-1514495"></A>These are the logical navigation constants:</P>
+<P CLASS="CodeReference">
+<A NAME="pgfId-1514496"></A>	NAVDIR_FIRSTCHILD</P>
+<P CLASS="CodeReference">
+<A NAME="pgfId-1514497"></A>	NAVDIR_LASTCHILD</P>
+<P CLASS="CodeReference">
+<A NAME="pgfId-1514498"></A>	NAVDIR_NEXT</P>
+<P CLASS="CodeReference">
+<A NAME="pgfId-1514499"></A>	NAVDIR_PREVIOUS</P>
+<UL>
+<LI CLASS="TableNote">
+<A NAME="pgfId-1514500"></A>All <EM CLASS="Courier">
+accNavigate</EM>
+ methods in PDF objects support the logical navigation directions. Only a few (PDF Structure Element, PDF ComboBox Form Field, and PDF ListBox Form Field) support the spatial navigation directions. Spatial navigation is only supported where it is explicitly noted.</LI>
+</UL>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1514502"></A><EM CLASS="Italic">
+varStart</EM>
+</P>
+<P CLASS="CodeReference">
+<A NAME="pgfId-1514503"></A>[in]</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1514505"></A><EM CLASS="Courier">
+CHILDID_SELF</EM>
+ to start navigation at the object itself, a child ID to start at one of the object's child elements.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1520443"></A><EM CLASS="Italic">
+pvarEnd</EM>
+</P>
+<P CLASS="CodeReference">
+<A NAME="pgfId-1514508"></A>[out, retval]</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1514510"></A>Returns a structure that contains information about the destination object. See MSAA documentation for details.</P>
+</TD>
+</TR>
+</TABLE>
+</DIV>
+</DIV>
+<DIV>
+<H3 CLASS="FM4Head-NoTOC">
+<A NAME="pgfId-1514318"></A>Returns</H3>
+<P CLASS="CodeReference">
+<A NAME="pgfId-1515066"></A><EM CLASS="Courier">
+HRESULT</EM>
+</P>
+</DIV>
+</DIV>
+<DIV>
+<H2 CLASS="FM3Head">
+<A NAME="pgfId-1515030"></A>get_accChild</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1514319"></A>Retrieves an <EM CLASS="Courier">
+IDispatch</EM>
+ interface pointer for the specified child, if one exists. All objects support this property.</P>
+<DIV>
+<H3 CLASS="FM4Head-NoTOC">
+<A NAME="pgfId-1514320"></A>Syntax</H3>
+<P CLASS="CodeReference">
+<A NAME="pgfId-1500584"></A>get_accChild (VARIANT <EM CLASS="CourierItalic">
+varChildID</EM>
+, IDispatch** <EM CLASS="CourierItalic">
+ppdispChild</EM>
+);</P>
+</DIV>
+<DIV>
+<H3 CLASS="FM4Head-NoTOC">
+<A NAME="pgfId-1500585"></A>Properties</H3>
+<DIV>
+<H6 CLASS="TableAnchor">
+<A NAME="pgfId-1507643"></A>&nbsp;</H6>
+<TABLE BORDER="1">
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1507661"></A><EM CLASS="Italic">
+varChildID</EM>
+ [in] </P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1507663"></A>The child ID for which to obtain a pointer. This can be a UID or the 1-based index of the child to retrieve.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1507665"></A><EM CLASS="Italic">
+ppdispChild </EM>
+</P>
+<P CLASS="CodeReference">
+<A NAME="pgfId-1507666"></A>[out, retval]</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1507668"></A>Returns the address of the child’s <EM CLASS="Courier">
+IDispatch</EM>
+ interface. </P>
+</TD>
+</TR>
+</TABLE>
+</DIV>
+</DIV>
+<DIV>
+<H3 CLASS="FM4Head-NoTOC">
+<A NAME="pgfId-1515101"></A>Returns</H3>
+<P CLASS="CodeReference">
+<A NAME="pgfId-1515102"></A><EM CLASS="Courier">
+HRESULT</EM>
+</P>
+</DIV>
+</DIV>
+<DIV>
+<H2 CLASS="FM3Head">
+<A NAME="pgfId-1515099"></A>get_accChildCount</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1514333"></A>Retrieves the number of children that belong to this object. All objects support this property.</P>
+<DIV>
+<H3 CLASS="FM4Head-NoTOC">
+<A NAME="pgfId-1514334"></A>Syntax</H3>
+<P CLASS="CodeReference">
+<A NAME="pgfId-1500596"></A>get_accChildCount (long* <EM CLASS="CourierItalic">
+pcountChildren</EM>
+);</P>
+</DIV>
+<DIV>
+<H3 CLASS="FM4Head-NoTOC">
+<A NAME="pgfId-1515142"></A>Properties</H3>
+<DIV>
+<H6 CLASS="TableAnchor">
+<A NAME="pgfId-1507708"></A>&nbsp;</H6>
+<TABLE BORDER="1">
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1507704"></A><EM CLASS="Italic">
+pcountChildren</EM>
+</P>
+<P CLASS="CodeReference">
+<A NAME="pgfId-1507705"></A>[out, retval]</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1507707"></A>Returns the number of children. The children are accessible objects or child elements. If the object has no children, this value is zero.</P>
+</TD>
+</TR>
+</TABLE>
+</DIV>
+</DIV>
+<DIV>
+<H3 CLASS="FM4Head-NoTOC">
+<A NAME="pgfId-1515158"></A>Returns</H3>
+<P CLASS="CodeReference">
+<A NAME="pgfId-1515159"></A><EM CLASS="Courier">
+HRESULT</EM>
+</P>
+</DIV>
+</DIV>
+<DIV>
+<H2 CLASS="FM3Head">
+<A NAME="pgfId-1514348"></A>get_accParent</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1514349"></A>Retrieves an <EM CLASS="Courier">
+IDispatch</EM>
+ interface pointer for the parent of this object. All objects support this property.</P>
+<DIV>
+<H3 CLASS="FM4Head-NoTOC">
+<A NAME="pgfId-1514350"></A>Syntax</H3>
+<P CLASS="CodeReference">
+<A NAME="pgfId-1507718"></A>get_accParent (IDispatch** <EM CLASS="CourierItalic">
+ppdispParent</EM>
+);</P>
+</DIV>
+<DIV>
+<H3 CLASS="FM4Head-NoTOC">
+<A NAME="pgfId-1515183"></A>Properties</H3>
+<DIV>
+<H6 CLASS="TableAnchor">
+<A NAME="pgfId-1505756"></A>&nbsp;</H6>
+<TABLE BORDER="1">
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1507738"></A><EM CLASS="Italic">
+ppdispParent </EM>
+</P>
+<P CLASS="CodeReference">
+<A NAME="pgfId-1507739"></A>[out, retval]</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1507741"></A>Returns the address of the parent’s <EM CLASS="Courier">
+IDispatch</EM>
+ interface.</P>
+</TD>
+</TR>
+</TABLE>
+</DIV>
+</DIV>
+<DIV>
+<H3 CLASS="FM4Head-NoTOC">
+<A NAME="pgfId-1515190"></A>Returns</H3>
+<P CLASS="CodeReference">
+<A NAME="pgfId-1515191"></A><EM CLASS="Courier">
+HRESULT</EM>
+</P>
+</DIV>
+</DIV>
+</DIV>
+<DIV>
+<H1 CLASS="FM2Head">
+<A NAME="pgfId-1500613"></A><A NAME="89440"></A>Descriptive properties and methods</H1>
+<P CLASS="Body">
+<A NAME="pgfId-1518993"></A>This section provides information on the descriptive APIs.</P>
+<DIV>
+<H2 CLASS="FM3Head">
+<A NAME="pgfId-1515199"></A>accDoDefaultAction</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1515200"></A>Performs the object's default action. Not all objects have a default action.</P>
+<DIV>
+<H3 CLASS="FM4Head-NoTOC">
+<A NAME="pgfId-1515201"></A>Syntax</H3>
+<P CLASS="CodeReference">
+<A NAME="pgfId-1515202"></A>accDoDefaultAction (VARIANT <EM CLASS="CourierItalic">
+varID</EM>
+);</P>
+</DIV>
+<DIV>
+<H3 CLASS="FM4Head-NoTOC">
+<A NAME="pgfId-1500620"></A>Properties</H3>
+<DIV>
+<H6 CLASS="TableAnchor">
+<A NAME="pgfId-1505782"></A>&nbsp;</H6>
+<TABLE BORDER="1">
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1507980"></A><EM CLASS="Italic">
+varID</EM>
+ [in] </P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1507982"></A><EM CLASS="Courier">
+CHILDID_SELF</EM>
+ to perform the action for the object itself, a child ID to perform the action for one of the object's child elements. </P>
+</TD>
+</TR>
+</TABLE>
+</DIV>
+</DIV>
+<DIV>
+<H3 CLASS="FM4Head-NoTOC">
+<A NAME="pgfId-1515393"></A>Returns</H3>
+<P CLASS="CodeReference">
+<A NAME="pgfId-1515394"></A><EM CLASS="Courier">
+HRESULT</EM>
+</P>
+</DIV>
+</DIV>
+<DIV>
+<H2 CLASS="FM3Head">
+<A NAME="pgfId-1515383"></A>get_accDefaultAction</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1515214"></A>Retrieves a string that describes the object's <A NAME="marker-1519012"></A>default action. Not all objects have a default action.</P>
+<DIV>
+<H3 CLASS="FM4Head-NoTOC">
+<A NAME="pgfId-1515215"></A>Syntax</H3>
+<P CLASS="CodeReference">
+<A NAME="pgfId-1515227"></A>get_accDefaultAction(VARIANT <EM CLASS="CourierItalic">
+varID</EM>
+, BSTR* <EM CLASS="CourierItalic">
+pszDefaultAction</EM>
+);</P>
+</DIV>
+<DIV>
+<H3 CLASS="FM4Head-NoTOC">
+<A NAME="pgfId-1500622"></A>Properties</H3>
+<DIV>
+<H6 CLASS="TableAnchor">
+<A NAME="pgfId-1505821"></A>&nbsp;</H6>
+<TABLE BORDER="1">
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1507996"></A><EM CLASS="Italic">
+varID</EM>
+ [in] </P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1507998"></A><EM CLASS="Courier">
+CHILDID_SELF</EM>
+ to get information for the object itself, a child ID to get information for one of the object's child elements. </P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1508000"></A><EM CLASS="Italic">
+pszDefaultAction</EM>
+</P>
+<P CLASS="CodeReference">
+<A NAME="pgfId-1508001"></A>[out, retval]</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1508003"></A>Returns a localized string that describes the default action for the object, or <EM CLASS="Courier">
+NULL</EM>
+ if this object has no default action.</P>
+</TD>
+</TR>
+</TABLE>
+</DIV>
+</DIV>
+<DIV>
+<H3 CLASS="FM4Head-NoTOC">
+<A NAME="pgfId-1515447"></A>Returns</H3>
+<P CLASS="CodeReference">
+<A NAME="pgfId-1515448"></A><EM CLASS="Courier">
+HRESULT</EM>
+</P>
+</DIV>
+</DIV>
+<DIV>
+<H2 CLASS="FM3Head">
+<A NAME="pgfId-1515229"></A>get_accDescription</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1515230"></A>Retrieves a string that describes the <A NAME="marker-1519019"></A>visual appearance of the object. Not all objects have a description.</P>
+<DIV>
+<H3 CLASS="FM4Head-NoTOC">
+<A NAME="pgfId-1515231"></A>Syntax</H3>
+<P CLASS="CodeReference">
+<A NAME="pgfId-1515246"></A>get_accDescription (VARIANT <EM CLASS="CourierItalic">
+varID</EM>
+, BSTR* <EM CLASS="CourierItalic">
+pszDescription</EM>
+);</P>
+</DIV>
+<DIV>
+<H3 CLASS="FM4Head-NoTOC">
+<A NAME="pgfId-1500634"></A>Properties</H3>
+<DIV>
+<H6 CLASS="TableAnchor">
+<A NAME="pgfId-1505844"></A>&nbsp;</H6>
+<TABLE BORDER="1">
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1508091"></A><EM CLASS="Italic">
+varID</EM>
+ [in] </P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1508093"></A><EM CLASS="Courier">
+CHILDID_SELF</EM>
+ to get information for the object itself, a child ID to get information for one of the object's child elements.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1508095"></A><EM CLASS="Italic">
+pszDescription</EM>
+</P>
+<P CLASS="CodeReference">
+<A NAME="pgfId-1508096"></A>[out, retval]</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1508098"></A>Returns a localized string that describes the object, or <EM CLASS="Courier">
+NULL</EM>
+ if this object has no description.</P>
+</TD>
+</TR>
+</TABLE>
+</DIV>
+</DIV>
+<DIV>
+<H3 CLASS="FM4Head-NoTOC">
+<A NAME="pgfId-1515516"></A>Returns</H3>
+<P CLASS="CodeReference">
+<A NAME="pgfId-1515517"></A><EM CLASS="Courier">
+HRESULT</EM>
+</P>
+</DIV>
+</DIV>
+<DIV>
+<H2 CLASS="FM3Head">
+<A NAME="pgfId-1515248"></A>get_accName</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1515249"></A>Retrieves the <A NAME="marker-1519026"></A>name of the object. All objects have a name.</P>
+<DIV>
+<H3 CLASS="FM4Head-NoTOC">
+<A NAME="pgfId-1515250"></A>Syntax</H3>
+<P CLASS="CodeReference">
+<A NAME="pgfId-1515293"></A>get_accName (VARIANT <EM CLASS="CourierItalic">
+varID</EM>
+, BSTR* <EM CLASS="CourierItalic">
+pszName</EM>
+ );</P>
+</DIV>
+<DIV>
+<H3 CLASS="FM4Head-NoTOC">
+<A NAME="pgfId-1500656"></A>Properties</H3>
+<DIV>
+<H6 CLASS="TableAnchor">
+<A NAME="pgfId-1505879"></A>&nbsp;</H6>
+<TABLE BORDER="1">
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1508104"></A><EM CLASS="Italic">
+varID</EM>
+ [in] </P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1508106"></A><EM CLASS="Courier">
+CHILDID_SELF</EM>
+ to get information for the object itself, a child ID to get information for one of the object's child elements. </P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1508108"></A><EM CLASS="Italic">
+pszName</EM>
+</P>
+<P CLASS="CodeReference">
+<A NAME="pgfId-1508109"></A>[out, retval]</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1508111"></A>Returns a localized string that contains the name of the object.</P>
+</TD>
+</TR>
+</TABLE>
+</DIV>
+</DIV>
+<DIV>
+<H3 CLASS="FM4Head-NoTOC">
+<A NAME="pgfId-1515573"></A>Returns</H3>
+<P CLASS="CodeReference">
+<A NAME="pgfId-1515574"></A><EM CLASS="Courier">
+HRESULT</EM>
+</P>
+</DIV>
+</DIV>
+<DIV>
+<H2 CLASS="FM3Head">
+<A NAME="pgfId-1515295"></A>get_accRole</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1515296"></A>Retrieves the <A NAME="marker-1519027"></A>role of the object. All objects have a role.</P>
+<DIV>
+<H3 CLASS="FM4Head-NoTOC">
+<A NAME="pgfId-1515297"></A>Syntax</H3>
+<P CLASS="CodeReference">
+<A NAME="pgfId-1515309"></A>get_accRole (VARIANT <EM CLASS="CourierItalic">
+varID</EM>
+, VARIANT* <EM CLASS="CourierItalic">
+pvarRole</EM>
+ );</P>
+</DIV>
+<DIV>
+<H3 CLASS="FM4Head-NoTOC">
+<A NAME="pgfId-1500668"></A>Properties</H3>
+<DIV>
+<H6 CLASS="TableAnchor">
+<A NAME="pgfId-1505928"></A>&nbsp;</H6>
+<TABLE BORDER="1">
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1508131"></A><EM CLASS="Italic">
+varID</EM>
+ [in] </P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1508133"></A><EM CLASS="Courier">
+CHILDID_SELF</EM>
+ to get information for the object itself, a child ID to get information for one of the object's child elements. </P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1508135"></A><EM CLASS="Italic">
+pvarRole</EM>
+</P>
+<P CLASS="CodeReference">
+<A NAME="pgfId-1508136"></A>[out, retval]</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1508138"></A>Returns a structure that contain an object role constant in its <EM CLASS="Courier">
+IVal</EM>
+ member.</P>
+</TD>
+</TR>
+</TABLE>
+</DIV>
+</DIV>
+<DIV>
+<H3 CLASS="FM4Head-NoTOC">
+<A NAME="pgfId-1515635"></A>Returns</H3>
+<P CLASS="CodeReference">
+<A NAME="pgfId-1515636"></A><EM CLASS="Courier">
+HRESULT</EM>
+</P>
+</DIV>
+</DIV>
+<DIV>
+<H2 CLASS="FM3Head">
+<A NAME="pgfId-1515311"></A>get_accState</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1515312"></A>Retrieves the <A NAME="marker-1519031"></A>state of the object. All objects have a state.</P>
+<DIV>
+<H3 CLASS="FM4Head-NoTOC">
+<A NAME="pgfId-1515313"></A>Syntax</H3>
+<P CLASS="CodeReference">
+<A NAME="pgfId-1515325"></A>get_accState (VARIANT <EM CLASS="CourierItalic">
+varID</EM>
+, VARIANT* <EM CLASS="CourierItalic">
+pvarState</EM>
+ );</P>
+</DIV>
+<DIV>
+<H3 CLASS="FM4Head-NoTOC">
+<A NAME="pgfId-1500680"></A>Properties</H3>
+<DIV>
+<H6 CLASS="TableAnchor">
+<A NAME="pgfId-1505938"></A>&nbsp;</H6>
+<TABLE BORDER="1">
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1508190"></A><EM CLASS="Italic">
+varID</EM>
+ [in] </P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1508192"></A><EM CLASS="Courier">
+CHILDID_SELF</EM>
+ to get information for the object itself, a child ID to get information for one of the object's child elements. </P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1508194"></A><EM CLASS="Italic">
+pvarRole</EM>
+</P>
+<P CLASS="CodeReference">
+<A NAME="pgfId-1508195"></A>[out, retval]</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1508197"></A>Returns a structure that contain an object state constant in its <EM CLASS="Courier">
+IVal</EM>
+ member.</P>
+</TD>
+</TR>
+</TABLE>
+</DIV>
+</DIV>
+<DIV>
+<H3 CLASS="FM4Head-NoTOC">
+<A NAME="pgfId-1515690"></A>Returns</H3>
+<P CLASS="CodeReference">
+<A NAME="pgfId-1515691"></A><EM CLASS="Courier">
+HRESULT</EM>
+</P>
+</DIV>
+</DIV>
+<DIV>
+<H2 CLASS="FM3Head">
+<A NAME="pgfId-1515327"></A>get_accValue</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1515328"></A>Retrieves the <A NAME="marker-1519035"></A>value of the object. Not all objects have a value.</P>
+<DIV>
+<H3 CLASS="FM4Head-NoTOC">
+<A NAME="pgfId-1515329"></A>Syntax</H3>
+<P CLASS="CodeReference">
+<A NAME="pgfId-1515341"></A>get_accValue (VARIANT <EM CLASS="CourierItalic">
+varID</EM>
+, BSTR* <EM CLASS="CourierItalic">
+pszValue</EM>
+ );</P>
+</DIV>
+<DIV>
+<H3 CLASS="FM4Head-NoTOC">
+<A NAME="pgfId-1515725"></A>Properties</H3>
+<DIV>
+<H6 CLASS="TableAnchor">
+<A NAME="pgfId-1515736"></A>&nbsp;</H6>
+<TABLE BORDER="1">
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1515728"></A><EM CLASS="Italic">
+varID</EM>
+ [in] </P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1515730"></A><EM CLASS="Courier">
+CHILDID_SELF</EM>
+ to get information for the object itself, a child ID to get information for one of the object's child elements. </P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1515732"></A><EM CLASS="Italic">
+pszValue</EM>
+</P>
+<P CLASS="CodeReference">
+<A NAME="pgfId-1515733"></A>[out, retval]</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1515735"></A>Returns a localized string that contains the current value of the object.</P>
+</TD>
+</TR>
+</TABLE>
+</DIV>
+</DIV>
+<DIV>
+<H3 CLASS="FM4Head-NoTOC">
+<A NAME="pgfId-1515743"></A>Returns</H3>
+<P CLASS="CodeReference">
+<A NAME="pgfId-1515744"></A><EM CLASS="Courier">
+HRESULT</EM>
+</P>
+</DIV>
+</DIV>
+</DIV>
+<DIV>
+<H1 CLASS="FM2Head-Top">
+<A NAME="pgfId-1515738"></A><A NAME="22290"></A>Selection and focus</H1>
+<P CLASS="Body">
+<A NAME="pgfId-1519036"></A>This section provides information on the selection and focus APIs.</P>
+<DIV>
+<H2 CLASS="FM3Head">
+<A NAME="pgfId-1515754"></A>accSelect</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1515755"></A>Modifies the selection or moves the <A NAME="marker-1519047"></A>keyboard focus of the object. All objects that support selection or receive the keyboard focus support this method.</P>
+<DIV>
+<H3 CLASS="FM4Head-NoTOC">
+<A NAME="pgfId-1515976"></A>Syntax</H3>
+<P CLASS="CodeReference">
+<A NAME="pgfId-1515766"></A>accSelect (long <EM CLASS="CourierItalic">
+flagsSelect</EM>
+, VARIANT <EM CLASS="CourierItalic">
+varID</EM>
+);</P>
+</DIV>
+<DIV>
+<H3 CLASS="FM4Head-NoTOC">
+<A NAME="pgfId-1500695"></A>Properties</H3>
+<DIV>
+<H6 CLASS="TableAnchor">
+<A NAME="pgfId-1505985"></A>&nbsp;</H6>
+<TABLE BORDER="1">
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1508518"></A><EM CLASS="Italic">
+flagsSelect</EM>
+ [in]</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1508520"></A>Flags that control how the selection or focus operation is performed. A logical OR of these <EM CLASS="Courier">
+SELFLAG</EM>
+ constants:</P>
+<P CLASS="CodeReference">
+<A NAME="pgfId-1508521"></A>	SELFLAG_NONE </P>
+<P CLASS="CodeReference">
+<A NAME="pgfId-1508522"></A>	SELFLAG_TAKEFOCUS </P>
+<P CLASS="CodeReference">
+<A NAME="pgfId-1508523"></A>	SELFLAG_TAKESELECTION</P>
+<P CLASS="CodeReference">
+<A NAME="pgfId-1508524"></A>	SELFLAG_EXTENDSELECTION</P>
+<P CLASS="CodeReference">
+<A NAME="pgfId-1508525"></A>	SELFLAG_ADDSELECTION</P>
+<P CLASS="CodeReference">
+<A NAME="pgfId-1508526"></A>	SELFLAG_REMOVESELECTION</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1508528"></A><EM CLASS="Italic">
+varID</EM>
+ [in] </P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1508530"></A><EM CLASS="Courier">
+CHILDID_SELF</EM>
+ to select the object itself, a child ID to select one of the object's child elements. </P>
+</TD>
+</TR>
+</TABLE>
+</DIV>
+</DIV>
+<DIV>
+<H3 CLASS="FM4Head-NoTOC">
+<A NAME="pgfId-1515926"></A>Returns</H3>
+<P CLASS="CodeReference">
+<A NAME="pgfId-1515927"></A><EM CLASS="Courier">
+HRESULT</EM>
+</P>
+</DIV>
+</DIV>
+<DIV>
+<H2 CLASS="FM3Head">
+<A NAME="pgfId-1515768"></A>get_accFocus</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1515769"></A>Retrieves the object that has the keyboard focus. All objects that receive the keyboard focus support this property.</P>
+<DIV>
+<H3 CLASS="FM4Head-NoTOC">
+<A NAME="pgfId-1515770"></A>Syntax</H3>
+<P CLASS="CodeReference">
+<A NAME="pgfId-1515813"></A>get_accFocus (VARIANT* <EM CLASS="CourierItalic">
+pvarID</EM>
+);</P>
+</DIV>
+<DIV>
+<H3 CLASS="FM4Head-NoTOC">
+<A NAME="pgfId-1500712"></A>Properties</H3>
+<DIV>
+<H6 CLASS="TableAnchor">
+<A NAME="pgfId-1506017"></A>&nbsp;</H6>
+<TABLE BORDER="1">
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1508648"></A><EM CLASS="Italic">
+pvarID</EM>
+ </P>
+<P CLASS="CodeReference">
+<A NAME="pgfId-1508649"></A>[out, retval] </P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1508651"></A>Returns the address of a <EM CLASS="Courier">
+VARIANT</EM>
+ structure that contains information about the object that has the focus. See MSAA documentation for details.</P>
+</TD>
+</TR>
+</TABLE>
+</DIV>
+</DIV>
+<DIV>
+<H3 CLASS="FM4Head-NoTOC">
+<A NAME="pgfId-1516057"></A>Returns</H3>
+<P CLASS="CodeReference">
+<A NAME="pgfId-1516058"></A><EM CLASS="Courier">
+HRESULT</EM>
+</P>
+</DIV>
+</DIV>
+<DIV>
+<H2 CLASS="FM3Head">
+<A NAME="pgfId-1515815"></A>get_accSelection</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1515816"></A>Retrieves the selected children of the object. All objects that support selection support this property.</P>
+<DIV>
+<H3 CLASS="FM4Head-NoTOC">
+<A NAME="pgfId-1515817"></A>Syntax</H3>
+<P CLASS="CodeReference">
+<A NAME="pgfId-1515834"></A>get_accSelection (VARIANT* <EM CLASS="CourierItalic">
+pvarChildren</EM>
+);</P>
+</DIV>
+<DIV>
+<H3 CLASS="FM4Head-NoTOC">
+<A NAME="pgfId-1500720"></A>Properties</H3>
+<DIV>
+<H6 CLASS="TableAnchor">
+<A NAME="pgfId-1506025"></A>&nbsp;</H6>
+<TABLE BORDER="1">
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1508443"></A><EM CLASS="Italic">
+pvarChildren</EM>
+ </P>
+<P CLASS="CodeReference">
+<A NAME="pgfId-1508444"></A>[out, retval] </P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1508446"></A>Returns the address of a <EM CLASS="Courier">
+VARIANT</EM>
+ structure that contains information about the selected children. See the MSAA documentation for details.</P>
+</TD>
+</TR>
+</TABLE>
+</DIV>
+</DIV>
+<DIV>
+<H3 CLASS="FM4Head-NoTOC">
+<A NAME="pgfId-1516096"></A>Returns</H3>
+<P CLASS="CodeReference">
+<A NAME="pgfId-1516097"></A><EM CLASS="Courier">
+HRESULT</EM>
+</P>
+</DIV>
+</DIV>
+</DIV>
+<DIV>
+<H1 CLASS="FM2Head-Top">
+<A NAME="pgfId-1500727"></A><A NAME="57514"></A>Spatial mapping</H1>
+<DIV>
+<H2 CLASS="FM3Head">
+<A NAME="pgfId-1515836"></A>accLocation</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1515837"></A>Retrieves the object's current <A NAME="marker-1519051"></A>screen location. All visual objects support this method.</P>
+<DIV>
+<H3 CLASS="FM4Head-NoTOC">
+<A NAME="pgfId-1515838"></A>Syntax</H3>
+<P CLASS="CodeReference">
+<A NAME="pgfId-1515848"></A>accLocation (long* <EM CLASS="CourierItalic">
+pxLeft</EM>
+, long* <EM CLASS="CourierItalic">
+pyTop</EM>
+, long* <EM CLASS="CourierItalic">
+pcxWidth</EM>
+, long* <EM CLASS="CourierItalic">
+pcyHeight</EM>
+, VARIANT <EM CLASS="CourierItalic">
+varID</EM>
+ );</P>
+</DIV>
+<DIV>
+<H3 CLASS="FM4Head-NoTOC">
+<A NAME="pgfId-1500742"></A>Properties</H3>
+<DIV>
+<H6 CLASS="TableAnchor">
+<A NAME="pgfId-1506045"></A>&nbsp;</H6>
+<TABLE BORDER="1">
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1508687"></A><EM CLASS="Italic">
+pxLeft, pxTop </EM>
+[out]</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1508689"></A>Return the x and y screen coordinates of the upper-left boundary of the object’s location. (The origin is the upper left corner of the screen.)</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1508691"></A><EM CLASS="Italic">
+pxWidth, pxHeight </EM>
+[in]</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1508693"></A>Return the object’s width and height in pixels.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1508695"></A><EM CLASS="Italic">
+varID</EM>
+ [in] </P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1508697"></A><EM CLASS="Courier">
+CHILDID_SELF</EM>
+ to get information for the object itself, a child ID to get information for one of the object's child elements. </P>
+</TD>
+</TR>
+</TABLE>
+</DIV>
+</DIV>
+<DIV>
+<H3 CLASS="FM4Head-NoTOC">
+<A NAME="pgfId-1516160"></A>Returns</H3>
+<P CLASS="CodeReference">
+<A NAME="pgfId-1516161"></A><EM CLASS="Courier">
+HRESULT</EM>
+</P>
+</DIV>
+</DIV>
+<DIV>
+<H2 CLASS="FM3Head">
+<A NAME="pgfId-1515850"></A>accHitTest</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1515851"></A>Retrieves the object at a specific screen location. All visual objects support this method.</P>
+<DIV>
+<H3 CLASS="FM4Head-NoTOC">
+<A NAME="pgfId-1515852"></A>Syntax</H3>
+<P CLASS="CodeReference">
+<A NAME="pgfId-1515895"></A>accHitTest (long, long, VARIANT* pvarID);</P>
+</DIV>
+<DIV>
+<H3 CLASS="FM4Head-NoTOC">
+<A NAME="pgfId-1500754"></A>Properties</H3>
+<DIV>
+<H6 CLASS="TableAnchor">
+<A NAME="pgfId-1506052"></A>&nbsp;</H6>
+<TABLE BORDER="1">
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1508795"></A><EM CLASS="Italic">
+pxLeft, pxTop </EM>
+[in]</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1508797"></A>The x and y screen coordinates of the point to test. (The origin is the upper left corner of the screen.)</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1508799"></A><EM CLASS="Italic">
+pvarID</EM>
+ [out, retval]</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1508801"></A> Address of a <EM CLASS="Courier">
+VARIANT</EM>
+ structure that identifies the object at the specified point. The information returned depends on the location of the specified point in relation to the object whose <EM CLASS="Courier">
+accHitTest</EM>
+ method is being called. You can use this method to determine whether the object at that point is a child of the object for which the method is called. For details, see the MSAA documentation.</P>
+<UL>
+<LI CLASS="TableNote">
+<A NAME="pgfId-1508802"></A>For PDF objects, hit testing has been implemented in a very basic way; it does not identify the boundaries of the object itself with fine granularity, but reports whether or not the tested location is within the bounding box of an element or subtree.</LI>
+</UL>
+</TD>
+</TR>
+</TABLE>
+</DIV>
+</DIV>
+<DIV>
+<H3 CLASS="FM4Head-NoTOC">
+<A NAME="pgfId-1516273"></A>Returns</H3>
+<P CLASS="CodeReference">
+<A NAME="pgfId-1516274"></A><EM CLASS="Courier">
+HRESULT</EM>
+</P>
+</DIV>
+</DIV>
+</DIV>
+<DIV>
+<H1 CLASS="FM2Head-Top">
+<A NAME="pgfId-1500756"></A><A NAME="88342"></A>IAccessible object types for PDF</H1>
+<P CLASS="Body">
+<A NAME="pgfId-1500757"></A>This section describes the MSAA <EM CLASS="Courier">
+IAccessible</EM>
+ object types that are defined to represent PDF documents and their elements. For each object, its methods are listed along with notes on how the implementation is specific to the object type. </P>
+<P CLASS="Note">
+<A NAME="pgfId-1500758"></A>Methods that are not listed are not implemented for a given object type.</P>
+<P CLASS="Body">
+<A NAME="pgfId-1500759"></A>The objects are:</P>
+<UL>
+<LI CLASS="Bullet1">
+<A NAME="pgfId-1500762"></A><A HREF="test_with_code.html#39396" CLASS="XRef">See PDF Document</A> </LI>
+<LI CLASS="Bullet1">
+<A NAME="pgfId-1500766"></A><A HREF="test_with_code.html#89992" CLASS="XRef">See PDF Page</A></LI>
+<LI CLASS="Bullet1">
+<A NAME="pgfId-1500770"></A><A HREF="test_with_code.html#72837" CLASS="XRef">See PDF Protected Document</A></LI>
+<LI CLASS="Bullet1">
+<A NAME="pgfId-1500774"></A><A HREF="test_with_code.html#10863" CLASS="XRef">See Empty PDF Document</A></LI>
+<LI CLASS="Bullet1">
+<A NAME="pgfId-1500778"></A><A HREF="test_with_code.html#77828" CLASS="XRef">See PDF Structure Element</A></LI>
+<LI CLASS="Bullet1">
+<A NAME="pgfId-1500782"></A><A HREF="test_with_code.html#23328" CLASS="XRef">See PDF Content Element</A></LI>
+<LI CLASS="Bullet1">
+<A NAME="pgfId-1500786"></A><A HREF="test_with_code.html#22500" CLASS="XRef">See PDF Comment</A></LI>
+<LI CLASS="Bullet1">
+<A NAME="pgfId-1500790"></A><A HREF="test_with_code.html#55866" CLASS="XRef">See PDF Link</A></LI>
+<LI CLASS="Bullet1">
+<A NAME="pgfId-1500794"></A><A HREF="test_with_code.html#40546" CLASS="XRef">See PDF Text Form Field</A></LI>
+<LI CLASS="Bullet1">
+<A NAME="pgfId-1500798"></A><A HREF="test_with_code.html#91493" CLASS="XRef">See PDF Button Form Field</A></LI>
+<LI CLASS="Bullet1">
+<A NAME="pgfId-1500802"></A><A HREF="test_with_code.html#13511" CLASS="XRef">See PDF CheckBox Form Field</A></LI>
+<LI CLASS="Bullet1">
+<A NAME="pgfId-1500806"></A><A HREF="test_with_code.html#19394" CLASS="XRef">See PDF RadioButton Form Field</A></LI>
+<LI CLASS="Bullet1">
+<A NAME="pgfId-1500810"></A><A HREF="test_with_code.html#25792" CLASS="XRef">See PDF ComboBox Form Field</A></LI>
+<LI CLASS="Bullet1">
+<A NAME="pgfId-1500814"></A><A HREF="test_with_code.html#20747" CLASS="XRef">See PDF List Box Form Field</A></LI>
+<LI CLASS="Bullet1">
+<A NAME="pgfId-1500818"></A><A HREF="test_with_code.html#91488" CLASS="XRef">See PDF Digital Signature Form Field</A></LI>
+<LI CLASS="Bullet1">
+<A NAME="pgfId-1500822"></A><A HREF="test_with_code.html#49405" CLASS="XRef">See PDF Caret</A></LI>
+</UL>
+<P CLASS="Body">
+<A NAME="pgfId-1500824"></A>The following are some general notes:</P>
+<UL>
+<LI CLASS="Bullet1">
+<A NAME="pgfId-1500825"></A>PDF form fields generally correspond closely to standard user interface elements described in the MSAA SDK document. The <EM CLASS="Courier">
+IAccessible</EM>
+ objects of form fields attempt to match the behavior described in Appendix A, “Supported User Interface Elements,” of the MSAA document. An exception is the PDF combo box, which has a much simpler structure. </LI>
+<LI CLASS="Bullet1">
+<A NAME="pgfId-1500826"></A>Form fields, links, and comments, as well as the document as a whole, can take keyboard focus. Subparts of the document (sections, paragraphs, and so on) cannot take focus. </LI>
+<LI CLASS="Bullet1">
+<A NAME="pgfId-1516885"></A>A document’s contents may be only partially visible on the screen. The <EM CLASS="Courier">
+get_accLocation</EM>
+ method for a given object returns the screen location of the visible part of the object only. You can use this method to determine which portions of the content are visible.</LI>
+</UL>
+<DIV>
+<H2 CLASS="FM3Head-Top">
+<A NAME="pgfId-1516887"></A><A NAME="39396"></A>PDF Document </H2>
+<P CLASS="Body">
+<A NAME="pgfId-1516888"></A>Represents the contents of an entire PDF document. The subtree of <EM CLASS="Courier">
+IAccessible</EM>
+ objects beneath the PDF Document object reflects the logical structure of the document. </P>
+<P CLASS="Note">
+<A NAME="pgfId-1500831"></A>Content that is not part of the logical structure, such as page headers and footers, is not presented through the MSAA interface.</P>
+<DIV>
+<H6 CLASS="TableAnchor">
+<A NAME="pgfId-1504261"></A>&nbsp;</H6>
+<TABLE BORDER="1">
+<TR>
+<TH ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableHead">
+<A NAME="pgfId-1508887"></A>Method</P>
+</TH>
+<TH ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableHead">
+<A NAME="pgfId-1508889"></A>Implementation notes</P>
+</TH>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1510033"></A>accHitTest</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1510035"></A>Returns the object at a given location if the location is within the document’s bounding box.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1510037"></A>accLocation</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1510039"></A>Returns the screen coordinates of the visible part of the document.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1510041"></A>accNavigate</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1510043"></A>Does not support spatial navigation (<EM CLASS="Courier">
+NAVDIR_UP</EM>
+, <EM CLASS="Courier">
+NAVDIR_DOWN</EM>
+, <EM CLASS="Courier">
+NAVDIR_RIGHT</EM>
+, <EM CLASS="Courier">
+NAVDIR_LEFT</EM>
+).</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1510045"></A>accSelect</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1510047"></A>For <EM CLASS="Courier">
+SELFLAG_TAKEFOCUS</EM>
+, the focus is set to the window containing the document and the document is positioned at the beginning. The other <EM CLASS="Courier">
+SELFLAG</EM>
+ values are not supported.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1510049"></A>get_accChild</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1510051"></A>Returns a child object. </P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1510053"></A>get_accChildCount</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1510055"></A>Returns the number of child objects beneath this one. </P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1510233"></A>get_accDescription</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1510235"></A>The description contains the full path name of the document and the number of pages it contains: “fileName, XXX pages”.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1510237"></A>get_accFocus</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1510239"></A>Returns the object that has the keyboard focus if it is this object or its child.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1510241"></A>get_accParent</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1510243"></A>The parent is <EM CLASS="Courier">
+NULL</EM>
+. </P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1510257"></A>get_accRole</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1510259"></A>The role is <EM CLASS="Courier">
+ROLE_SYSTEM_DOCUMENT</EM>
+. </P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1510261"></A>get_accSelection</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1510263"></A>Returns <EM CLASS="Courier">
+NULL</EM>
+.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1510265"></A>get_accState</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1510267"></A>The state is <EM CLASS="Courier">
+STATE_SYSTEM_READONLY</EM>
+. </P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1510269"></A>get_accValue</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1510271"></A>If the root of the structure tree has an <EM CLASS="Courier">
+Alt</EM>
+ attribute, the value is the contents of the <EM CLASS="Courier">
+Alt</EM>
+ attribute. </P>
+</TD>
+</TR>
+</TABLE>
+</DIV>
+</DIV>
+<DIV>
+<H2 CLASS="FM3Head-Top">
+<A NAME="pgfId-1500890"></A><A NAME="89992"></A>PDF Page</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1500891"></A>Represents the contents of one page of a PDF document. The subtree of <EM CLASS="Courier">
+IAccessible</EM>
+ objects beneath the PDF Page node reflects the logical structure of the page. </P>
+<P CLASS="Note">
+<A NAME="pgfId-1500892"></A>Content that is not part of the logical structure, such as page headers and footers, is not presented through the MSAA interface.</P>
+<DIV>
+<H6 CLASS="TableAnchor">
+<A NAME="pgfId-1508941"></A>&nbsp;</H6>
+<TABLE BORDER="1">
+<TR>
+<TH ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableHead">
+<A NAME="pgfId-1508898"></A>Method</P>
+</TH>
+<TH ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableHead">
+<A NAME="pgfId-1508900"></A>Implementation notes</P>
+</TH>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1510461"></A>accHitTest</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1510463"></A>Returns the object at the given location if the location is within the page’s bounding box.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1510465"></A>accLocation</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1510467"></A>Returns the screen coordinates of the visible part of the page.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1510469"></A>accNavigate</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1510471"></A>Does not support spatial navigation (<EM CLASS="Courier">
+NAVDIR_UP</EM>
+, <EM CLASS="Courier">
+NAVDIR_DOWN</EM>
+, <EM CLASS="Courier">
+NAVDIR_RIGHT</EM>
+, <EM CLASS="Courier">
+NAVDIR_LEFT</EM>
+).</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1510473"></A>accSelect</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1510475"></A>For <EM CLASS="Courier">
+SELFLAG_TAKEFOCUS</EM>
+, the focus is set to the window containing the page and the page is positioned at the top. The other <EM CLASS="Courier">
+SELFLAG</EM>
+ values are not supported.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1510477"></A>get_accChild</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1510479"></A>Returns a child object. </P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1510481"></A>get_accChildCount</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1510483"></A>Returns the number of child objects beneath this one. </P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1510485"></A>get_accDescription</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1510487"></A>The description contains the full path name of the document and the page number of the page: “fileName, page XXX”.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1510490"></A>get_accFocus</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1510492"></A>Returns the object that has the keyboard focus if it is this object or its child.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1510494"></A>get_accParent</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1510496"></A>The parent is <EM CLASS="Courier">
+NULL</EM>
+.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1510498"></A>get_accRole</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1510500"></A>A custom role, <EM CLASS="Courier">
+Page</EM>
+, is defined for this object.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1510502"></A>get_accSelection</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1510504"></A>Returns <EM CLASS="Courier">
+NULL</EM>
+.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1510506"></A>get_accState</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1510508"></A>The state is <EM CLASS="Courier">
+STATE_SYSTEM_READONLY</EM>
+.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1510510"></A>get_accValue</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1510512"></A>If the root of the structure tree has an <EM CLASS="Courier">
+Alt</EM>
+ attribute, the value is the contents of the <EM CLASS="Courier">
+Alt</EM>
+ attribute</P>
+</TD>
+</TR>
+</TABLE>
+</DIV>
+</DIV>
+<DIV>
+<H2 CLASS="FM3Head-Top">
+<A NAME="pgfId-1500952"></A><A NAME="72837"></A>PDF Protected Document</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1500953"></A>Represents a protected document. When the permissions associated with a document disable accessibility, the contents are not exported through the MSAA interface. The <EM CLASS="Courier">
+IAccessible</EM>
+ object for such a document informs the client that the document is protected.</P>
+<DIV>
+<H6 CLASS="TableAnchor">
+<A NAME="pgfId-1509033"></A>&nbsp;</H6>
+<TABLE BORDER="1">
+<TR>
+<TH ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableHead">
+<A NAME="pgfId-1508990"></A>Method</P>
+</TH>
+<TH ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableHead">
+<A NAME="pgfId-1508992"></A>Implementation notes</P>
+</TH>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1510617"></A>accHitTest</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1510619"></A>Returns <EM CLASS="Courier">
+NULL</EM>
+.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1510621"></A>accLocation</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1510623"></A>The screen coordinates of the visible part of the document.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1510625"></A>accNavigate</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1510627"></A>Does not support spatial navigation (<EM CLASS="Courier">
+NAVDIR_UP</EM>
+, <EM CLASS="Courier">
+NAVDIR_DOWN</EM>
+, <EM CLASS="Courier">
+NAVDIR_RIGHT</EM>
+, <EM CLASS="Courier">
+NAVDIR_LEFT</EM>
+).</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1510629"></A>accSelect</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1510631"></A>Returns <EM CLASS="Courier">
+NULL</EM>
+.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1510633"></A>get_accChildCount</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1510635"></A>The child count is 0.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1510637"></A>get_accFocus</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1510639"></A>Returns <EM CLASS="Courier">
+NULL</EM>
+.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1510641"></A>get_accName</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1510643"></A>The name is “Alert: Protection Failure”.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1510653"></A>get_accParent</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1510655"></A>The parent is <EM CLASS="Courier">
+NULL</EM>
+.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1510657"></A>get_accRole</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1510659"></A>The role is <EM CLASS="Courier">
+ROLE_SYSTEM_TEXT</EM>
+.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1510661"></A>get_accSelection</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1510663"></A>Returns <EM CLASS="Courier">
+NULL</EM>
+.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1510665"></A>get_accState</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1510667"></A>The state is <EM CLASS="Courier">
+STATE_SYSTEM_ALERT_MEDIUM + STATE_SYSTEM_UNAVAILABLE + STATE_SYSTEM_READONLY</EM>
+.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1510669"></A>get_accValue</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1510671"></A>The value is “This document’s security settings prevent access.”</P>
+</TD>
+</TR>
+</TABLE>
+</DIV>
+</DIV>
+<DIV>
+<H2 CLASS="FM3Head-Top">
+<A NAME="pgfId-1501009"></A><A NAME="10863"></A><A NAME="Empty PDF Document"></A>Empty PDF Document</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1501010"></A>Represents an empty or apparently empty document. A PDF file may have no contents to export through MSAA if, for instance, the file is a scanned image that has not been run through an optical character recognition (OCR) tool. The <EM CLASS="Courier">
+IAccessible</EM>
+ object for empty documents and pages informs the client that there may be a problem, even if the document or page is genuinely empty.</P>
+<DIV>
+<H6 CLASS="TableAnchor">
+<A NAME="pgfId-1509125"></A>&nbsp;</H6>
+<TABLE BORDER="1">
+<TR>
+<TH ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableHead">
+<A NAME="pgfId-1509082"></A>Method</P>
+</TH>
+<TH ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableHead">
+<A NAME="pgfId-1509084"></A>Implementation notes</P>
+</TH>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1510772"></A>accHitTest</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1510774"></A>Returns <EM CLASS="Courier">
+NULL</EM>
+.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1510776"></A>accLocation</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1510778"></A>Returns the screen coordinates of the visible part of the document.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1510780"></A>accNavigate</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1510782"></A>Does not support spatial navigation (<EM CLASS="Courier">
+NAVDIR_UP</EM>
+, <EM CLASS="Courier">
+NAVDIR_DOWN</EM>
+, <EM CLASS="Courier">
+NAVDIR_RIGHT</EM>
+, <EM CLASS="Courier">
+NAVDIR_LEFT</EM>
+).</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1510784"></A>accSelect</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1510786"></A>Returns <EM CLASS="Courier">
+NULL</EM>
+.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1510788"></A>get_accChildCount</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1510790"></A>The child count is 0.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1510792"></A>get_accFocus</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1510794"></A>Returns <EM CLASS="Courier">
+NULL</EM>
+.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1510796"></A>get_accName</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1510798"></A>The name is “Alert: Empty document”.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1510808"></A>get_accParent</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1510810"></A>The parent is <EM CLASS="Courier">
+NULL</EM>
+.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1510812"></A>get_accRole</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1510814"></A>The role is <EM CLASS="Courier">
+ROLE_SYSTEM_TEXT</EM>
+.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1510816"></A>get_accSelection</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1510818"></A>Returns <EM CLASS="Courier">
+NULL</EM>
+.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1510820"></A>get_accState</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1510822"></A>The state is <EM CLASS="Courier">
+STATE_SYSTEM_READONLY</EM>
+.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1510824"></A>get_accValue</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1510826"></A>The value is “This document appears to be empty. It may be a scanned image that needs OCR or it may have malformed structure.”</P>
+</TD>
+</TR>
+</TABLE>
+</DIV>
+</DIV>
+<DIV>
+<H2 CLASS="FM3Head-Top">
+<A NAME="pgfId-1501066"></A><A NAME="77828"></A>PDF Structure Element</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1501067"></A>Represents a subtree of the logical structure tree for the document.  It might correspond to a paragraph, a heading, a chapter, a span of text within a word, or a figure. </P>
+<DIV>
+<H6 CLASS="TableAnchor">
+<A NAME="pgfId-1509217"></A>&nbsp;</H6>
+<TABLE BORDER="1">
+<TR>
+<TH ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableHead">
+<A NAME="pgfId-1509174"></A>Method</P>
+</TH>
+<TH ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableHead">
+<A NAME="pgfId-1509176"></A>Implementation notes</P>
+</TH>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1510935"></A>accDoDefaultAction</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1510937"></A>If the element has state <EM CLASS="Courier">
+STATE_SYSTEM_LINKED</EM>
+, performs the action associated with the link.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1510939"></A>accHitTest</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1510941"></A>Returns this object or any child at the given location if the location is within the bounding box of this object.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1510943"></A>accLocation</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1510945"></A>Returns the screen coordinates of the visible part of the subtree.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1510947"></A>accNavigate</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1510949"></A>Only spatial navigation (<EM CLASS="Courier">
+NAVDIR_UP</EM>
+, <EM CLASS="Courier">
+NAVDIR_DOWN</EM>
+, <EM CLASS="Courier">
+NAVDIR_RIGHT</EM>
+,<EM CLASS="Code">
+ </EM>
+<EM CLASS="Courier">
+NAVDIR_LEFT</EM>
+) is supported for table elements (<EM CLASS="Courier">
+ROLE_SYSTEM_CELL</EM>
+, <EM CLASS="Courier">
+ROLE_SYSTEM_ROW</EM>
+, <EM CLASS="Courier">
+ROLE_SYSTEM_ROWHEADER</EM>
+, <EM CLASS="Courier">
+ROW_SYSTEM_COLUMNHEADER</EM>
+).</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1510951"></A>accSelect</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1510953"></A>For <EM CLASS="Courier">
+SELFLAG_TAKEFOCUS</EM>
+, sets focus to the document window and positions the document to the beginning of the structure element content. The other <EM CLASS="Courier">
+SELFLAG</EM>
+ values are not supported.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1510955"></A>get_accChild</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1510957"></A>Returns a child object. </P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1510975"></A>get_accChildCount</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1510977"></A>Returns the number of child objects beneath this one. </P>
+<P CLASS="TableBody">
+<A NAME="pgfId-1510978"></A>If the node has an <EM CLASS="Courier">
+Alt</EM>
+ or <EM CLASS="Courier">
+ActualText</EM>
+ attribute, the child count is always zero. </P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1510980"></A>get_accDefaultAction</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1510982"></A>If the element has state <EM CLASS="Courier">
+STATE_SYSTEM_LINKED</EM>
+, returns a text description of the action associated with the link (such as “go to page 5” or “play movie”). </P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1510984"></A>get_accFocus</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1510986"></A>Returns the object that has the keyboard focus if it is this object or its child.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1510988"></A>get_accParent</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1510990"></A>The parent is either another structure element or the document structure root.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1510992"></A>get_accRole</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1510994"></A>The role is one of: </P>
+<P CLASS="CodeReference">
+<A NAME="pgfId-1510995"></A>	ROLE_SYSTEM_GROUPING</P>
+<P CLASS="CodeReference">
+<A NAME="pgfId-1510996"></A>	ROLE_SYSTEM_TABLE</P>
+<P CLASS="CodeReference">
+<A NAME="pgfId-1510997"></A>	ROLE_SYSTEM_CELL</P>
+<P CLASS="CodeReference">
+<A NAME="pgfId-1510998"></A>	ROLE_SYSTEM_ROW</P>
+<P CLASS="CodeReference">
+<A NAME="pgfId-1510999"></A>	ROLE_SYSTEM_ROWHEADER<BR>
+	ROW_SYSTEM_COLUMNHEADER</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1511001"></A>get_accSelection</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1511003"></A>Returns <EM CLASS="Courier">
+NULL</EM>
+.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1511005"></A>get_accState</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1511007"></A>The state is a logical OR of one or more of the following: </P>
+<P CLASS="CodeReference">
+<A NAME="pgfId-1511008"></A>	STATE_SYSTEM_READONLY<BR>
+	STATE_SYSTEM_LINKED<BR>
+	STATE_SYSTEM_FOCUSABLE<BR>
+	STATE_SYSTEM_FOCUSED</P>
+<UL>
+<LI CLASS="Bullet1">
+<A NAME="pgfId-1511009"></A><EM CLASS="Courier">
+STATE_SYSTEM_READONLY</EM>
+ is always set.</LI>
+<LI CLASS="Bullet1">
+<A NAME="pgfId-1511010"></A>If the element is part of a link (that is, if it has an ancestor of role <EM CLASS="Courier">
+ROLE_SYSTEM_LINK</EM>
+) then both <EM CLASS="Courier">
+STATE_SYSTEM_LINKED</EM>
+ and <EM CLASS="Courier">
+STATE_SYSTEM_FOCUSABLE</EM>
+ are set, and <EM CLASS="Courier">
+STATE_SYSTEM_FOCUSED</EM>
+ can also be set.</LI>
+</UL>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1511012"></A>get_accValue</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1511014"></A>If this node has an <EM CLASS="Courier">
+Alt</EM>
+ or <EM CLASS="Courier">
+ActualText</EM>
+ attribute, the value is the contents of the attribute. </P>
+</TD>
+</TR>
+</TABLE>
+</DIV>
+</DIV>
+<DIV>
+<H2 CLASS="FM3Head-Top">
+<A NAME="pgfId-1501140"></A><A NAME="23328"></A>PDF Content Element</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1501141"></A>Corresponds to a leaf node of the logical structure tree for the document. It corresponds to marking commands in the page content stream. </P>
+<DIV>
+<H6 CLASS="TableAnchor">
+<A NAME="pgfId-1509266"></A>&nbsp;</H6>
+<TABLE BORDER="1">
+<TR>
+<TH ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableHead">
+<A NAME="pgfId-1509223"></A>Method</P>
+</TH>
+<TH ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableHead">
+<A NAME="pgfId-1509225"></A>Implementation notes</P>
+</TH>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1511155"></A>accDoDefaultAction</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1511157"></A>If the element has state <EM CLASS="Courier">
+STATE_SYSTEM_LINKED</EM>
+, performs the action associated with the link.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1511159"></A>accHitTest</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1511161"></A>Returns this object if the given location is within the bounding box of this object.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1511163"></A>accLocation</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1511165"></A>Returns the screen coordinates of the visible part of the element.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1511167"></A>accNavigate</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1511169"></A>Does not support spatial navigation (<EM CLASS="Courier">
+NAVDIR_UP</EM>
+, <EM CLASS="Courier">
+NAVDIR_DOWN</EM>
+, <EM CLASS="Courier">
+NAVDIR_RIGHT</EM>
+, <EM CLASS="Courier">
+NAVDIR_LEFT</EM>
+).</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1511171"></A>accSelect</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1511173"></A>For <EM CLASS="Courier">
+SELFLAG_TAKEFOCUS</EM>
+, sets focus to the document window and positions the document to the beginning of the content. The other <EM CLASS="Courier">
+SELFLAG</EM>
+ values are not supported.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1511175"></A>get_accChildCount</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1511177"></A>The child count is 0.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1511179"></A>get_accDefaultAction</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1511181"></A>If the element has state <EM CLASS="Courier">
+STATE_SYSTEM_LINKED</EM>
+, describes the action associated with the link. </P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1511195"></A>get_accFocus</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1511197"></A>Returns the object that has the keyboard focus if it is this object or its child.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1511199"></A>get_accParent</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1511201"></A>The parent is either a structure element or the document structure root.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1511203"></A>get_accRole</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1511205"></A>The role is one of:</P>
+<P CLASS="CodeReference">
+<A NAME="pgfId-1511206"></A>	ROLE_SYSTEM_TEXT<BR>
+	ROLE_SYSTEM_GRAPHIC<BR>
+	ROLE_SYSTEM_CLIENT</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1511208"></A>get_accSelection</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1511210"></A>Returns <EM CLASS="Courier">
+NULL</EM>
+.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1511212"></A>get_accState</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1511214"></A>The state is a logical OR of one or more of the following: </P>
+<P CLASS="CodeReference">
+<A NAME="pgfId-1511215"></A>	STATE_SYSTEM_READONLY<BR>
+	STATE_SYSTEM_LINKED<BR>
+	STATE_SYSTEM_FOCUSABLE<BR>
+	STATE_SYSTEM_FOCUSED</P>
+<UL>
+<LI CLASS="Bullet1">
+<A NAME="pgfId-1511216"></A><EM CLASS="Courier">
+STATE_SYSTEM_READONLY</EM>
+ is always set.</LI>
+<LI CLASS="Bullet1">
+<A NAME="pgfId-1511217"></A>If the element is part of a link (that is, if it has an ancestor of role <EM CLASS="Courier">
+ROLE_SYSTEM_LINK</EM>
+) then both <EM CLASS="Courier">
+STATE_SYSTEM_LINKED</EM>
+ and <EM CLASS="Courier">
+STATE_SYSTEM_FOCUSABLE</EM>
+ are set, and <EM CLASS="Courier">
+STATE_SYSTEM_FOCUSED</EM>
+ can also be set.</LI>
+</UL>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1511219"></A>get_accValue</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1511221"></A>If this node has an <EM CLASS="Courier">
+Alt</EM>
+ or <EM CLASS="Courier">
+ActualText</EM>
+ attribute, the value is the content of that attribute. Otherwise, the value is all of the text contained in the marking commands for this node.</P>
+</TD>
+</TR>
+</TABLE>
+</DIV>
+</DIV>
+<DIV>
+<H2 CLASS="FM3Head-Top">
+<A NAME="pgfId-1501205"></A><A NAME="22500"></A>PDF Comment </H2>
+<P CLASS="Body">
+<A NAME="pgfId-1501206"></A>Corresponds to a comment, such as a text note or highlight comment, attached to the document.</P>
+<P CLASS="Note">
+<A NAME="pgfId-1501207"></A>PDF comments cover a range of objects, many of which do not map into the standard MSAA roles. The <EM CLASS="Courier">
+IAccessible</EM>
+ object captures the most important properties of comments.</P>
+<DIV>
+<H6 CLASS="TableAnchor">
+<A NAME="pgfId-1509315"></A>&nbsp;</H6>
+<TABLE BORDER="1">
+<TR>
+<TH ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableHead">
+<A NAME="pgfId-1509272"></A>Method</P>
+</TH>
+<TH ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableHead">
+<A NAME="pgfId-1509274"></A>Implementation notes</P>
+</TH>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1511349"></A>accDoDefaultAction</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1511351"></A>The default action depends on the type of comment. It can, for example, open or close a popup.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1511353"></A>accHitTest</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1511355"></A>Returns this object if the given location is within the bounding box of this object.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1511357"></A>accLocation</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1511359"></A>Returns the screen coordinates of the visible part of the object.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1511361"></A>accNavigate</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1511363"></A>Does not support spatial navigation (<EM CLASS="Courier">
+NAVDIR_UP</EM>
+, <EM CLASS="Courier">
+NAVDIR_DOWN</EM>
+, <EM CLASS="Courier">
+NAVDIR_RIGHT</EM>
+, <EM CLASS="Courier">
+NAVDIR_LEFT</EM>
+).</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1511365"></A>accSelect</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1511367"></A>Supports <EM CLASS="Courier">
+SELFLAG_TAKEFOCUS</EM>
+ (that is, selecting the comment gives it the keyboard focus). </P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1511369"></A>get_accChildCount</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1511371"></A>The child count is 0.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1511373"></A>get_accDefaultAction</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1511375"></A>Describes the default action, which depends on the type of comment.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1511398"></A>get_accDescription</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1511400"></A>For file attachment and sound comments, a description of the icon for the comment.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1511402"></A>get_accFocus</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1511404"></A>Returns the object that has the keyboard focus if it is this object or its child.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1511406"></A>get_accName</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<UL>
+<LI CLASS="Bullet1">
+<A NAME="pgfId-1511408"></A>The name indicates the type of comment; for example, Text Comment or Underline Comment.</LI>
+<LI CLASS="Bullet1">
+<A NAME="pgfId-1511409"></A>If the comment is open and has a title, the name also contains the title of the comment. </LI>
+<LI CLASS="Bullet1">
+<A NAME="pgfId-1511410"></A>If the comment is a Free Text comment or modifies a span of text (such as an Underline or Strikeout Comment), the name also contains the text.</LI>
+</UL>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1511412"></A>get_accParent</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1511414"></A>The parent is either a structure element or the document structure root.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1511419"></A>get_accRole</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1511421"></A>The role is one of: </P>
+<P CLASS="CodeReference">
+<A NAME="pgfId-1511422"></A>	ROLE_SYSTEM_TEXT<BR>
+	ROLE_SYSTEM_WHITESPACE<BR>
+	ROLE_SYSTEM_PUSHBUTTON</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1511424"></A>get_accSelection</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1511426"></A>Returns <EM CLASS="Courier">
+NULL</EM>
+. </P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1511428"></A>get_accState</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1511430"></A>The state is a logical OR of one or more of the following: </P>
+<P CLASS="CodeReference">
+<A NAME="pgfId-1511431"></A>	STATE_SYSTEM_READONLY<BR>
+	STATE_SYSTEM_INVISIBLE<BR>
+	STATE_SYSTEM_LINKED<BR>
+	STATE_SYSTEM_FOCUSABLE<BR>
+	STATE_SYSTEM_EXPANDED<BR>
+	STATE_SYSTEM_COLLAPSED<BR>
+	STATE_SYSTEM_FOCUSED</P>
+<UL>
+<LI CLASS="Bullet1">
+<A NAME="pgfId-1511432"></A>If a comment can be opened, <EM CLASS="Courier">
+STATE_SYSTEM_LINKED</EM>
+ is set.</LI>
+<LI CLASS="Bullet1">
+<A NAME="pgfId-1511433"></A><EM CLASS="Courier">
+STATE_SYSTEM_EXPANDED</EM>
+ and <EM CLASS="Courier">
+STATE_SYSTEM_COLLAPSED</EM>
+ indicate whether the comment is open.</LI>
+</UL>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1511435"></A>get_accValue</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<UL>
+<LI CLASS="Bullet1">
+<A NAME="pgfId-1511437"></A>If the comment is open, the value is the contents of the comment pop-up window.</LI>
+<LI CLASS="Bullet1">
+<A NAME="pgfId-1511438"></A>If the comment is a type that does not open, the value is the contents of the comment itself.</LI>
+</UL>
+</TD>
+</TR>
+</TABLE>
+</DIV>
+</DIV>
+<DIV>
+<H2 CLASS="FM3Head-Top">
+<A NAME="pgfId-1501283"></A><A NAME="55866"></A>PDF Link </H2>
+<P CLASS="Body">
+<A NAME="pgfId-1501284"></A>Corresponds to a link in the document. </P>
+<DIV>
+<H6 CLASS="TableAnchor">
+<A NAME="pgfId-1509364"></A>&nbsp;</H6>
+<TABLE BORDER="1">
+<TR>
+<TH ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableHead">
+<A NAME="pgfId-1511630"></A>Method</P>
+</TH>
+<TH ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableHead">
+<A NAME="pgfId-1511632"></A>Implementation notes</P>
+</TH>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1511634"></A>accDoDefaultAction</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1511636"></A>Performs the link’s action.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1511638"></A>accHitTest</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1511640"></A>Returns this object or any child at the given location if the location is within the bounding box of this object.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1511642"></A>accLocation</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1511644"></A>Returns the screen coordinates of the visible part of the object.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1511646"></A>accNavigate</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1511648"></A>Does not support spatial navigation (<EM CLASS="Courier">
+NAVDIR_UP</EM>
+, <EM CLASS="Courier">
+NAVDIR_DOWN</EM>
+, <EM CLASS="Courier">
+NAVDIR_RIGHT</EM>
+, <EM CLASS="Courier">
+NAVDIR_LEFT</EM>
+).</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1511650"></A>accSelect</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1511652"></A>Supports <EM CLASS="Courier">
+SELFLAG_TAKEFOCUS</EM>
+</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1511654"></A>get_accChild</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1511656"></A>Returns a child object.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1511658"></A>get_accChildCount</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1511660"></A>Returns the number of children. If the node has an <EM CLASS="Courier">
+Alt</EM>
+ or <EM CLASS="Courier">
+ActualText</EM>
+ attribute, the child count is always zero. </P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1511662"></A>get_accDefaultAction</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1511664"></A>Describes the action defined for this link. </P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1511666"></A>get_accFocus</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1511668"></A>Returns the object that has the keyboard focus if it is this object or its child.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1511670"></A>get_accName</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1511672"></A>If there is an <EM CLASS="Courier">
+Alt</EM>
+ or <EM CLASS="Courier">
+ActualText</EM>
+ attribute associated with this link, the name is the associated <EM CLASS="Courier">
+Alt</EM>
+ text or <EM CLASS="Courier">
+ActualText</EM>
+. Otherwise, the name is the value of the first content child.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1511674"></A>get_accParent</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1511676"></A>The parent is either a structure element or the document structure root.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1511678"></A>get_accRole</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1511680"></A>The role is <EM CLASS="Courier">
+ROLE_SYSTEM_LINK</EM>
+.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1511682"></A>get_accSelection</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1511684"></A>Returns <EM CLASS="Courier">
+NULL</EM>
+.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1511696"></A>get_accState</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1511698"></A>The state is a logical OR of the following: </P>
+<P CLASS="CodeReference">
+<A NAME="pgfId-1511699"></A>	STATE_SYSTEM_READONLY<BR>
+	STATE_SYSTEM_INVISIBLE<BR>
+	STATE_SYSTEM_LINKED<BR>
+	STATE_SYSTEM_FOCUSABLE<BR>
+	STATE_SYSTEM_FOCUSED</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1511701"></A>get_accValue</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1511703"></A>The value is a unique identifier for each link.</P>
+</TD>
+</TR>
+</TABLE>
+</DIV>
+</DIV>
+<DIV>
+<H2 CLASS="FM3Head-Top">
+<A NAME="pgfId-1501354"></A><A NAME="40546"></A>PDF Text Form Field</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1501355"></A>Corresponds to a text form field in the document. </P>
+<DIV>
+<H6 CLASS="TableAnchor">
+<A NAME="pgfId-1509440"></A>&nbsp;</H6>
+<TABLE BORDER="1">
+<TR>
+<TH ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableHead">
+<A NAME="pgfId-1509397"></A>Method</P>
+</TH>
+<TH ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableHead">
+<A NAME="pgfId-1509399"></A>Implementation notes</P>
+</TH>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1511829"></A>accDoDefaultAction</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1511831"></A>Sets focus to the text field for editing.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1511833"></A>accHitTest</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1511835"></A>Returns this object if the given location is within the bounding box of this object.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1511837"></A>accLocation</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1511839"></A>Returns the screen coordinates of the visible part of the object.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1511841"></A>accNavigate</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1511843"></A>Does not support spatial navigation (<EM CLASS="Courier">
+NAVDIR_UP</EM>
+, <EM CLASS="Courier">
+NAVDIR_DOWN</EM>
+, <EM CLASS="Courier">
+NAVDIR_RIGHT</EM>
+, <EM CLASS="Courier">
+NAVDIR_LEFT</EM>
+).</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1511845"></A>accSelect</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1511847"></A>Supports <EM CLASS="Courier">
+SELFLAG_TAKEFOCUS</EM>
+ (that is, selecting the field gives it the keyboard focus). </P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1511849"></A>get_accChildCount</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1511851"></A>The child count is 0.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1511853"></A>get_accDefaultAction</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1511855"></A>The default action is “DoubleClick”, which sets the keyboard focus to this field. </P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1511955"></A>get_accFocus</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1511957"></A>Returns the object that has the keyboard focus if it is this object or its child.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1511959"></A>get_accName</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1511961"></A>The user name (short description) of the form field.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1511963"></A>get_accParent</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1511965"></A>Returns the parent object.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1511967"></A>get_accRole</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1511969"></A>The role is <EM CLASS="Courier">
+ROLE_SYSTEM_TEXT</EM>
+.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1511971"></A>get_accState</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1511973"></A>The state of the text field is a logical OR of one of more of: </P>
+<P CLASS="CodeReference">
+<A NAME="pgfId-1511974"></A>	STATE_SYSTEM_INVISIBLE<BR>
+	STATE_SYSTEM_UNAVAILABLE<BR>
+	STATE_SYSTEM_READONLY<BR>
+	STATE_SYSTEM_SELECTABLE<BR>
+	STATE_SYSTEM_FOCUSABLE<BR>
+	STATE_SYSTEM_FOCUSED<BR>
+	STATE_SYSTEM_PROTECTED</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1511976"></A>get_accValue</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1511978"></A>The value is the text in the text field.</P>
+</TD>
+</TR>
+</TABLE>
+</DIV>
+</DIV>
+<DIV>
+<H2 CLASS="FM3Head-Top">
+<A NAME="pgfId-1501417"></A><A NAME="91493"></A>PDF Button Form Field</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1501418"></A>Corresponds to a button form field in the document.</P>
+<DIV>
+<H6 CLASS="TableAnchor">
+<A NAME="pgfId-1509518"></A>&nbsp;</H6>
+<TABLE BORDER="1">
+<TR>
+<TH ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableHead">
+<A NAME="pgfId-1509475"></A>Method</P>
+</TH>
+<TH ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableHead">
+<A NAME="pgfId-1509477"></A>Implementation notes</P>
+</TH>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1512117"></A>accDoDefaultAction</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1512119"></A>Presses the button.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1512121"></A>accHitTest</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1512123"></A>Returns this object if the given location is within the bounding box of this object.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1512125"></A>accLocation</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1512127"></A>Returns the screen coordinates of the visible part of the object.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1512129"></A>accNavigate</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1512131"></A>Does not support spatial navigation (<EM CLASS="Courier">
+NAVDIR_UP</EM>
+, <EM CLASS="Courier">
+NAVDIR_DOWN</EM>
+, <EM CLASS="Courier">
+NAVDIR_RIGHT</EM>
+, <EM CLASS="Courier">
+NAVDIR_LEFT</EM>
+).</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1512133"></A>accSelect</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1512135"></A>Supports <EM CLASS="Courier">
+SELFLAG_TAKEFOCUS</EM>
+ (that is, selecting the field gives it the keyboard focus). </P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1512137"></A>get_accChildCount</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1512139"></A>The child count is 0.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1512141"></A>get_accDefaultAction</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1512143"></A>The default action is “Press”.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1512153"></A>get_accFocus</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1512155"></A>Returns the object that has the keyboard focus if it is this object or its child.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1512157"></A>get_accName</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1512159"></A>The user name of the form field (short description).</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1512161"></A>get_accParent</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1512163"></A>Returns the parent object.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1512165"></A>get_accRole</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1512167"></A>The role is <EM CLASS="Courier">
+ROLE_SYSTEM_PUSHBUTTON</EM>
+.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1512169"></A>get_accState</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1512171"></A>The state of the button is a logical OR of one or more of: </P>
+<P CLASS="CodeReference">
+<A NAME="pgfId-1512172"></A>	STATE_SYSTEM_INVISIBLE<BR>
+	STATE_SYSTEM_UNAVAILABLE<BR>
+	STATE_SYSTEM_READONLY<BR>
+	STATE_SYSTEM_FOCUSABLE<BR>
+	STATE_SYSTEM_FOCUSED</P>
+</TD>
+</TR>
+</TABLE>
+</DIV>
+</DIV>
+<DIV>
+<H2 CLASS="FM3Head-Top">
+<A NAME="pgfId-1501476"></A><A NAME="13511"></A>PDF CheckBox Form Field</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1501477"></A>Corresponds to a checkbox form field in the document.</P>
+<DIV>
+<H6 CLASS="TableAnchor">
+<A NAME="pgfId-1509596"></A>&nbsp;</H6>
+<TABLE BORDER="1">
+<TR>
+<TH ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableHead">
+<A NAME="pgfId-1509553"></A>Method</P>
+</TH>
+<TH ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableHead">
+<A NAME="pgfId-1509555"></A>Implementation notes</P>
+</TH>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1512291"></A>accDoDefaultAction</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1512293"></A>Checks or unchecks the box.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1512295"></A>accHitTest</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1512297"></A>Returns this object if the given location is within the bounding box of this object.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1512299"></A>accLocation</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1512301"></A>Returns the screen coordinates of the visible part of the object.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1512303"></A>accNavigate</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1512305"></A>Does not support spatial navigation (<EM CLASS="Courier">
+NAVDIR_UP</EM>
+, <EM CLASS="Courier">
+NAVDIR_DOWN</EM>
+, <EM CLASS="Courier">
+NAVDIR_RIGHT</EM>
+, <EM CLASS="Courier">
+NAVDIR_LEFT</EM>
+).</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1512307"></A>accSelect</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1512309"></A>Supports <EM CLASS="Courier">
+SELFLAG_TAKEFOCUS</EM>
+ (that is, selecting the field gives it the keyboard focus). </P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1512311"></A>get_accChildCount</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1512313"></A>The child count is 0.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1512315"></A>get_accDefaultAction</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<UL>
+<LI CLASS="Bullet1">
+<A NAME="pgfId-1512317"></A>If the check box has been selected, the default action is “UnCheck”. </LI>
+<LI CLASS="Bullet1">
+<A NAME="pgfId-1512318"></A>If the check box has not been selected, the default action is “Check”.</LI>
+</UL>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1512350"></A>get_accFocus</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1512352"></A>Returns the object that has the keyboard focus if it is this object or its child.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1512354"></A>get_accName</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1512356"></A>The user name (short description) of the form field.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1512358"></A>get_accParent</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1512360"></A>Returns the parent object.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1512362"></A>get_accRole</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1512364"></A>The role is <EM CLASS="Courier">
+ROLE_SYSTEM_CHECKBUTTON</EM>
+.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1512366"></A>get_accState</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1512368"></A>The state of the check box is a logical OR of one or more of: </P>
+<P CLASS="CodeReference">
+<A NAME="pgfId-1512369"></A>	STATE_SYSTEM_INVISIBLE<BR>
+	STATE_SYSTEM_UNAVAILABLE<BR>
+	STATE_SYSTEM_READONLY<BR>
+	STATE_SYSTEM_FOCUSABLE <BR>
+	STATE_SYSTEM_FOCUSED<BR>
+	STATE_SYSTEM_CHECKED</P>
+</TD>
+</TR>
+</TABLE>
+</DIV>
+</DIV>
+<DIV>
+<H2 CLASS="FM3Head-Top">
+<A NAME="pgfId-1501537"></A><A NAME="19394"></A>PDF RadioButton Form Field</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1501538"></A>Corresponds to a radio button form field in the document. </P>
+<DIV>
+<H6 CLASS="TableAnchor">
+<A NAME="pgfId-1509673"></A>&nbsp;</H6>
+<TABLE BORDER="1">
+<TR>
+<TH ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableHead">
+<A NAME="pgfId-1509630"></A>Method</P>
+</TH>
+<TH ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableHead">
+<A NAME="pgfId-1509632"></A>Implementation notes</P>
+</TH>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1512414"></A>accDoDefaultAction</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1512416"></A>Clicks the radio button.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1512418"></A>accHitTest</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1512420"></A>Returns this object if the given location is within the bounding box of this object.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1512422"></A>accLocation</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1512424"></A>Returns the screen coordinates of the visible part of the object.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1512426"></A>accNavigate</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1512428"></A>Does not support spatial navigation (<EM CLASS="Courier">
+NAVDIR_UP</EM>
+, <EM CLASS="Courier">
+NAVDIR_DOWN</EM>
+, <EM CLASS="Courier">
+NAVDIR_RIGHT</EM>
+, <EM CLASS="Courier">
+NAVDIR_LEFT</EM>
+).</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1512430"></A>accSelect</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1512432"></A>Supports <EM CLASS="Courier">
+SELFLAG_TAKEFOCUS</EM>
+ (that is, selecting the field gives it the keyboard focus). </P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1512434"></A>get_accChildCount</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1512436"></A>The child count is 0.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1512438"></A>get_accDefaultAction</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1512440"></A>The default action is “Check”.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1512482"></A>get_accFocus</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1512484"></A>Returns the object that has the keyboard focus if it is this object or its child.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1512486"></A>get_accName</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1512488"></A>The user name (short description) of the form field.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1512490"></A>get_accParent</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1512492"></A>Returns the parent object.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1512494"></A>get_accRole</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1512496"></A>The role is <EM CLASS="Courier">
+ROLE_SYSTEM_RADIOBUTTON</EM>
+.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1512498"></A>get_accState</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1512500"></A>The state of the radio button is a logical OR of one or more of: </P>
+<P CLASS="CodeReference">
+<A NAME="pgfId-1512501"></A>	STATE_SYSTEM_INVISIBLE<BR>
+	STATE_SYSTEM_UNAVAILABLE<BR>
+	STATE_SYSTEM_READONLY<BR>
+	STATE_SYSTEM_FOCUSABLE<BR>
+	STATE_SYSTEM_FOCUSED<BR>
+	STATE_SYSTEM_CHECKED</P>
+</TD>
+</TR>
+</TABLE>
+</DIV>
+</DIV>
+<DIV>
+<H2 CLASS="FM3Head-Top">
+<A NAME="pgfId-1501597"></A><A NAME="25792"></A>PDF ComboBox Form Field</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1501598"></A>Corresponds to a combo box form field in the document. It can represent either the combo box itself, or a list item in a combo box.</P>
+<DIV>
+<H6 CLASS="TableAnchor">
+<A NAME="pgfId-1509751"></A>&nbsp;</H6>
+<TABLE BORDER="1">
+<TR>
+<TH ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableHead">
+<A NAME="pgfId-1509708"></A>Method</P>
+</TH>
+<TH ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableHead">
+<A NAME="pgfId-1509710"></A>Implementation notes</P>
+</TH>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1512556"></A>accDoDefaultAction</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<UL>
+<LI CLASS="Bullet1">
+<A NAME="pgfId-1512558"></A>The combo box does not have a default action. </LI>
+<LI CLASS="Bullet1">
+<A NAME="pgfId-1512559"></A>For a list item, the default action is “DoubleClick”, which selects the list item.</LI>
+</UL>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1512561"></A>accHitTest</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<UL>
+<LI CLASS="Bullet1">
+<A NAME="pgfId-1512563"></A>For a combo box, returns this object or any child at the given location if the location is within the bounding box of this object.</LI>
+<LI CLASS="Bullet1">
+<A NAME="pgfId-1512564"></A>For a list item, returns this object if the given location is within the bounding box of this object.</LI>
+</UL>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1512566"></A>accLocation</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<UL>
+<LI CLASS="Bullet1">
+<A NAME="pgfId-1512568"></A>For a combo box, returns the screen coordinates of the visible part of the object.</LI>
+<LI CLASS="Bullet1">
+<A NAME="pgfId-1512569"></A>For a list item, the location is always reported as 0,0,0,0.</LI>
+</UL>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1512571"></A>accNavigate</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<UL>
+<LI CLASS="Bullet1">
+<A NAME="pgfId-1512573"></A>Spatial directions <EM CLASS="Courier">
+NAVDIR_UP</EM>
+ and <EM CLASS="Courier">
+NAVDIR_DOWN</EM>
+ are available for list items.</LI>
+</UL>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1512575"></A>accSelect</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<UL>
+<LI CLASS="Bullet1">
+<A NAME="pgfId-1512577"></A>The combo box supports <EM CLASS="Courier">
+SELFLAG_TAKEFOCUS</EM>
+ (that is, selecting the field gives it the keyboard focus).</LI>
+<LI CLASS="Bullet1">
+<A NAME="pgfId-1512578"></A>For a list item, sets the combo box to the list item value.</LI>
+</UL>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1512580"></A>get_accChild</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<UL>
+<LI CLASS="Bullet1">
+<A NAME="pgfId-1512582"></A>For a combo box, gets the child items.</LI>
+<LI CLASS="Bullet1">
+<A NAME="pgfId-1512583"></A>A list item has no children.</LI>
+</UL>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1512585"></A>get_accChildCount</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<UL>
+<LI CLASS="Bullet1">
+<A NAME="pgfId-1512587"></A>For a combo box, the child count is the number of items in the list.</LI>
+<LI CLASS="Bullet1">
+<A NAME="pgfId-1512588"></A>For a list item, the child count is 0. </LI>
+</UL>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1512605"></A>get_accDefaultAction</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<UL>
+<LI CLASS="Bullet1">
+<A NAME="pgfId-1512607"></A>The combobox does not have a default action. </LI>
+<LI CLASS="Bullet1">
+<A NAME="pgfId-1512608"></A>For a list item, the default action is “DoubleClick”, which selects the list item.</LI>
+</UL>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1512610"></A>get_accFocus</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<UL>
+<LI CLASS="Bullet1">
+<A NAME="pgfId-1512612"></A>Returns the object that has the keyboard focus if it is this object or its child. </LI>
+</UL>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1512614"></A>get_accName</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<UL>
+<LI CLASS="Bullet1">
+<A NAME="pgfId-1512616"></A>For a combo box, the name is the user name (short description) of the form field if it has been defined. </LI>
+<LI CLASS="Bullet1">
+<A NAME="pgfId-1512617"></A>For a list item, the name is the text of the list item.</LI>
+</UL>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1512619"></A>get_accParent</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<UL>
+<LI CLASS="Bullet1">
+<A NAME="pgfId-1512621"></A>Returns the parent object.</LI>
+</UL>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1512634"></A>get_accSelection</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<UL>
+<LI CLASS="Bullet1">
+<A NAME="pgfId-1512636"></A>Returns <EM CLASS="Courier">
+NULL</EM>
+.</LI>
+</UL>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1512638"></A>get_accRole</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<UL>
+<LI CLASS="Bullet1">
+<A NAME="pgfId-1512640"></A>For a combo box, the role is <EM CLASS="Courier">
+ROLE_SYSTEM_COMBOBOX</EM>
+.</LI>
+<LI CLASS="Bullet1">
+<A NAME="pgfId-1512641"></A>For a list item, the role is <EM CLASS="Courier">
+ROLE_SYSTEM_LISTITEM</EM>
+.</LI>
+</UL>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1512643"></A>get_accState</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<UL>
+<LI CLASS="Bullet1">
+<A NAME="pgfId-1512645"></A>For a combo box, the state is a logical OR of one or more these values:</LI>
+</UL>
+<P CLASS="CodeReference">
+<A NAME="pgfId-1512646"></A>		STATE_SYSTEM_INVISIBLEc<BR>
+		STATE_SYSTEM_UNAVAILABLE<BR>
+		STATE_SYSTEM_READONLY<BR>
+		STATE_SYSTEM_FOCUSABLE</P>
+<P CLASS="CodeReference">
+<A NAME="pgfId-1512647"></A>		STATE_SYSTEM_FOCUSED<BR>
+		STATE_SYSTEM_SELECTABLE<BR>
+		STATE_SYSTEM_SELECTED</P>
+<UL>
+<LI CLASS="Bullet1">
+<A NAME="pgfId-1512648"></A>For a list box item, the state is a logical OR of one or more these values:</LI>
+</UL>
+<P CLASS="CodeReference">
+<A NAME="pgfId-1512649"></A>		STATE_SYSTEM_READONLY<BR>
+		STATE_SYSTEM_SELECTABLE<BR>
+		STATE_SYSTEM_SELECTED<BR>
+		STATE_SYSTEM_INVISIBLE<BR>
+		STATE_SYSTEM_UNAVAILABLE</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1512651"></A>get_accValue</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<UL>
+<LI CLASS="Bullet1">
+<A NAME="pgfId-1512653"></A>For a combo box, the value is the text value of the currently selected list item. </LI>
+<LI CLASS="Bullet1">
+<A NAME="pgfId-1512654"></A>For a list item, the value is the text of the list item.</LI>
+</UL>
+</TD>
+</TR>
+</TABLE>
+</DIV>
+</DIV>
+<DIV>
+<H2 CLASS="FM3Head-Top">
+<A NAME="pgfId-1501681"></A><A NAME="20747"></A>PDF List Box Form Field</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1501682"></A>Corresponds to a list box form field in the document. It can represent either the list box itself or a list item in a list box. </P>
+<DIV>
+<H6 CLASS="TableAnchor">
+<A NAME="pgfId-1509802"></A>&nbsp;</H6>
+<TABLE BORDER="1">
+<TR>
+<TH ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableHead">
+<A NAME="pgfId-1509759"></A>Method</P>
+</TH>
+<TH ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableHead">
+<A NAME="pgfId-1509761"></A>Implementation notes</P>
+</TH>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1512697"></A>accDoDefaultAction</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<UL>
+<LI CLASS="Bullet1">
+<A NAME="pgfId-1512699"></A>The list box does not have a default action.</LI>
+<LI CLASS="Bullet1">
+<A NAME="pgfId-1512700"></A>For a list item, the default action is “Double Click,” which selects the item. </LI>
+</UL>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1512702"></A>accHitTest</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<UL>
+<LI CLASS="Bullet1">
+<A NAME="pgfId-1512704"></A>For a list box, returns this object or any child at the given location if the location is within the bounding box of this object.</LI>
+<LI CLASS="Bullet1">
+<A NAME="pgfId-1512705"></A>For a list item, returns this object if the given location is within the bounding box of this object.</LI>
+</UL>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1512707"></A>accLocation</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<UL>
+<LI CLASS="Bullet1">
+<A NAME="pgfId-1512709"></A>For a list box, returns the screen coordinates of the visible part of the object.</LI>
+<LI CLASS="Bullet1">
+<A NAME="pgfId-1512710"></A>For a list item, the location is always reported as 0,0,0,0.</LI>
+</UL>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1512712"></A>accNavigate</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<UL>
+<LI CLASS="Bullet1">
+<A NAME="pgfId-1512714"></A>Spatial directions <EM CLASS="Courier">
+NAVDIR_UP</EM>
+ and <EM CLASS="Courier">
+NAVDIR_DOWN</EM>
+ are available for list items.</LI>
+</UL>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1512716"></A>accSelect</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<UL>
+<LI CLASS="Bullet1">
+<A NAME="pgfId-1512718"></A>The list box supports <EM CLASS="Courier">
+SELFLAG_TAKEFOCUS</EM>
+ (that is, selecting the field gives it the keyboard focus).</LI>
+<LI CLASS="Bullet1">
+<A NAME="pgfId-1512719"></A>For a list item, sets the list box selection to the list item value.</LI>
+</UL>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1512721"></A>get_accChild</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<UL>
+<LI CLASS="Bullet1">
+<A NAME="pgfId-1512723"></A>For a list box, gets the child items.</LI>
+<LI CLASS="Bullet1">
+<A NAME="pgfId-1512724"></A>A list item has no children.</LI>
+</UL>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1512726"></A>get_accChildCount</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<UL>
+<LI CLASS="Bullet1">
+<A NAME="pgfId-1512728"></A>For a list box, the child count is the number of items in the list box.</LI>
+<LI CLASS="Bullet1">
+<A NAME="pgfId-1512729"></A>For a list item, the child count is 0. </LI>
+</UL>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1512731"></A>get_accDefaultAction</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<UL>
+<LI CLASS="Bullet1">
+<A NAME="pgfId-1512733"></A>The list box does not have a default action.</LI>
+<LI CLASS="Bullet1">
+<A NAME="pgfId-1512734"></A>For a list item, the default action is “Double Click,” which selects the item. </LI>
+</UL>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1512760"></A>get_accFocus</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<UL>
+<LI CLASS="Bullet1">
+<A NAME="pgfId-1512762"></A>Returns the object that has the keyboard focus if it is this object or its child.</LI>
+</UL>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1512764"></A>get_accName</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<UL>
+<LI CLASS="Bullet1">
+<A NAME="pgfId-1512766"></A>For a list box, the name is the user name (short description) for the form field. </LI>
+<LI CLASS="Bullet1">
+<A NAME="pgfId-1512767"></A>For a list item, the name is the text of the list item.</LI>
+</UL>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1512769"></A>get_accParent</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<UL>
+<LI CLASS="Bullet1">
+<A NAME="pgfId-1512771"></A>Returns the parent object.</LI>
+</UL>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1512773"></A>get_accRole</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<UL>
+<LI CLASS="Bullet1">
+<A NAME="pgfId-1512775"></A>For a list box, the role is <EM CLASS="Courier">
+ROLE_SYSTEM_LIST</EM>
+.</LI>
+<LI CLASS="Bullet1">
+<A NAME="pgfId-1512776"></A>For a list item, the role is <EM CLASS="Courier">
+ROLE_SYSTEM_LISTITEM</EM>
+.</LI>
+</UL>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1512778"></A>get_accState</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<UL>
+<LI CLASS="Bullet1">
+<A NAME="pgfId-1512780"></A>For a list box, the state is a logical OR of one or more these values:</LI>
+</UL>
+<P CLASS="CodeReference">
+<A NAME="pgfId-1512781"></A>		STATE_SYSTEM_INVISIBLEc<BR>
+		STATE_SYSTEM_UNAVAILABLE<BR>
+		STATE_SYSTEM_READONLY<BR>
+		STATE_SYSTEM_FOCUSABLE</P>
+<UL>
+<LI CLASS="Bullet1">
+<A NAME="pgfId-1512782"></A>For a list item, the state is a logical OR of one or more these values:</LI>
+</UL>
+<P CLASS="CodeReference">
+<A NAME="pgfId-1512783"></A>		STATE_SYSTEM_READONLY<BR>
+		STATE_SYSTEM_SELECTABLE<BR>
+		STATE_SYSTEM_SELECTED<BR>
+		STATE_SYSTEM_INVISIBLE<BR>
+		STATE_SYSTEM_UNAVAILABLE</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1512785"></A>get_accSelection</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<UL>
+<LI CLASS="Bullet1">
+<A NAME="pgfId-1512787"></A>Returns <EM CLASS="Courier">
+NULL</EM>
+.</LI>
+</UL>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1512789"></A>get_accValue</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<UL>
+<LI CLASS="Bullet1">
+<A NAME="pgfId-1512791"></A>For a list box, the value is the text value of the currently selected list item. </LI>
+<LI CLASS="Bullet1">
+<A NAME="pgfId-1512792"></A>For a list item, the <EM CLASS="Courier">
+Value</EM>
+ attribute is the text of the list item.</LI>
+</UL>
+</TD>
+</TR>
+</TABLE>
+</DIV>
+</DIV>
+<DIV>
+<H2 CLASS="FM3Head-Top">
+<A NAME="pgfId-1501764"></A><A NAME="91488"></A>PDF Digital Signature Form Field</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1501765"></A>Corresponds to a digital signature form field in the document. </P>
+<DIV>
+<H6 CLASS="TableAnchor">
+<A NAME="pgfId-1509851"></A>&nbsp;</H6>
+<TABLE BORDER="1">
+<TR>
+<TH ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableHead">
+<A NAME="pgfId-1509808"></A>Method</P>
+</TH>
+<TH ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableHead">
+<A NAME="pgfId-1509810"></A>Implementation notes</P>
+</TH>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1512797"></A>accDoDefaultAction</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1512799"></A>Signs the document if the signature field is unsigned and has either been opened with Acrobat or the document has permissions that allow signing. If the document is signed, the default action brings up a dialog box containing the signature information.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1512801"></A>accHitTest</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1512803"></A>Returns this object if the given location is within the bounding box of this object.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1512805"></A>accLocation</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1512807"></A>Returns the screen coordinates of the visible part of the object.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1512809"></A>accNavigate</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1512811"></A>Does not support spatial navigation (<EM CLASS="Courier">
+NAVDIR_UP</EM>
+, <EM CLASS="Courier">
+NAVDIR_DOWN</EM>
+, <EM CLASS="Courier">
+NAVDIR_RIGHT</EM>
+, <EM CLASS="Courier">
+NAVDIR_LEFT</EM>
+).</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1512813"></A>accSelect</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1512815"></A>Supports <EM CLASS="Courier">
+SELFLAG_TAKEFOCUS</EM>
+.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1512817"></A>get_accChildCount</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1512819"></A>The child count is 0.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1512821"></A>get_accDefaultAction</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1512823"></A>Returns <EM CLASS="Courier">
+NULL</EM>
+.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1512825"></A>get_accFocus</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1512827"></A>Returns the object that has the keyboard focus if it is this object or its child.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1512842"></A>get_accName</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1512844"></A>The user name (short description) of the form field.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1512846"></A>get_accParent</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1512848"></A>Returns the parent object.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1512850"></A>get_accRole</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1512852"></A>The Digital Signature form field does not map to any of the existing roles, and a custom role, <EM CLASS="Courier">
+Signature</EM>
+, has been defined for it.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1512856"></A>get_accState</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1512858"></A>The <EM CLASS="Courier">
+State</EM>
+ attribute of the digital signature is a logical OR of one of more of these values: </P>
+<P CLASS="CodeReference">
+<A NAME="pgfId-1512859"></A>	STATE_SYSTEM_INVISIBLE<BR>
+	STATE_SYSTEM_UNAVAILABLE<BR>
+	STATE_SYSTEM_READONLY<BR>
+	STATE_SYSTEM_FOCUSABLE<BR>
+	STATE_SYSTEM_FOCUSED<BR>
+	STATE_SYSTEM_CHECKED<BR>
+	STATE_SYSTEM_TRAVERSED</P>
+<UL>
+<LI CLASS="Bullet1">
+<A NAME="pgfId-1512860"></A>If <EM CLASS="Courier">
+STATE_SYSTEM_CHECKED</EM>
+ is set, but not <EM CLASS="Courier">
+STATE_SYSTEM_TRAVERSED</EM>
+, the signature is unverified. </LI>
+<LI CLASS="Bullet1">
+<A NAME="pgfId-1512861"></A>If <EM CLASS="Courier">
+STATE_SYSTEM_TRAVERSED</EM>
+ is set, but not <EM CLASS="Courier">
+STATE_SYSTEM_CHECKED</EM>
+, the signature is invalid. </LI>
+<LI CLASS="Bullet1">
+<A NAME="pgfId-1512862"></A>If both <EM CLASS="Courier">
+STATE_SYSTEM_CHECKED</EM>
+ and <EM CLASS="Courier">
+STATE_SYSTEM_TRAVERSED</EM>
+ are set, the signature is valid.</LI>
+</UL>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1512864"></A>get_accValue</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1512866"></A>The <EM CLASS="Courier">
+Value</EM>
+ attribute is the name and date of the signature, if that information is present.</P>
+</TD>
+</TR>
+</TABLE>
+</DIV>
+</DIV>
+<DIV>
+<H2 CLASS="FM3Head-Top">
+<A NAME="pgfId-1501831"></A><A NAME="49405"></A>PDF Caret</H2>
+<P CLASS="Body">
+<A NAME="pgfId-1501832"></A>Represents a caret (text cursor). If a document contains the system caret because focus is within an editable text field or an editable ComboBox field, clients can obtain an <EM CLASS="Courier">
+IAccessible</EM>
+ object for the caret to determine where it is located. </P>
+<DIV>
+<H6 CLASS="TableAnchor">
+<A NAME="pgfId-1509900"></A>&nbsp;</H6>
+<TABLE BORDER="1">
+<TR>
+<TH ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableHead">
+<A NAME="pgfId-1509857"></A>Method</P>
+</TH>
+<TH ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableHead">
+<A NAME="pgfId-1509859"></A>Implementation notes</P>
+</TH>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1512886"></A>accHitTest</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1512888"></A>Returns this object if the given location is within the bounding box of this object.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1512890"></A>accLocation</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1512892"></A>Returns the screen coordinates of the caret, both when the caret is in a form field and when it is in the document.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1512894"></A>get_accChildCount</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1512896"></A>The child count is 0.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1512898"></A>get_accDescription</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1512900"></A>The description is a string containing the index of the character in the field that follows the caret.</P>
+<P CLASS="TableBody">
+<A NAME="pgfId-1512901"></A>If the caret is at the beginning of the field, the description string is “0”. If the caret follows the first character, the description string is “1”.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1512903"></A>get_accParent</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1512905"></A>The parent is the field containing the caret. However, the caret <EM CLASS="Courier">
+IAccessible</EM>
+ object is not listed among the children of that field’s <EM CLASS="Courier">
+IAccessible</EM>
+ object.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1512907"></A>get_accRole</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1512909"></A>The role is  <EM CLASS="Courier">
+ROLE_SYSTEM_CARET</EM>
+.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1512911"></A>get_accState</P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1512913"></A>The state is 0.</P>
+</TD>
+</TR>
+<TR>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="CodeReference">
+<A NAME="pgfId-1512915"></A>get_accValue </P>
+</TD>
+<TD ROWSPAN="1" COLSPAN="1">
+<P CLASS="TableBody">
+<A NAME="pgfId-1512917"></A>The value is the current value of the Text field or ComboBox form field containing the caret.</P>
+</TD>
+</TR>
+</TABLE>
+</DIV>
+</DIV>
+</DIV>
+</BODY>
+</HTML>

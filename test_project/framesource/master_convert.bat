@@ -15,7 +15,7 @@ python loop_rst_regex.py
 :: Run pandoc on all HTML files. 
 
 
-for /R %framedir% %%f in (*.htm *.html) do pandoc --lua-filter=not-in-format.lua -o %output%%%~nf.rst %%f --wrap=none
+for /R %framedir% %%f in (*.htm *.html) do pandoc --lua-filter=admonitions.lua -o %output%%%~nf.rst %%f --wrap=none
 
 :: remove unwanted files
 del /s /q *.css
